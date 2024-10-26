@@ -1,0 +1,164 @@
+import React, { useEffect, useState } from "react";
+import FormField from "../components/FormField.jsx";
+import Button from "../components/Button.jsx";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format, parse, isValid } from "date-fns";
+
+const RegisterPhase1 = ({ data, updateData, onNext }) => {
+  const [firstNameError, setFirstNameError] = useState(false);
+  const [lastNameError, setLastNameError] = useState(false);
+  const [dateError, setDateError] = useState(false);
+
+  const handleInputChange = (e) => {
+    updateData({ ...data, [e.target.name]: e.target.value });
+  };
+
+  const handleDateChange = (date) => {
+    const formattedDate = date ? format(date, "yyyy/MM/dd") : "";
+    updateData({ ...data, date_of_birth: formattedDate });
+  };
+
+  const validate = () => {
+    const nameRegex = /^[A-Za-z]+(?: [A-Za-z]+)*$/;
+    let errorState = true;
+    if (!data.first_name || !nameRegex.test(data.first_name)) {
+      setFirstNameError(true);
+      errorState = false;
+    } else {
+      setFirstNameError(false);
+    }
+    if (!data.last_name || !nameRegex.test(data.last_name)) {
+      setLastNameError(true);
+      errorState = false;
+    } else {
+      setLastNameError(false);
+    }
+    const today = new Date();
+    const selectedDate = new Date(data.date_of_birth);
+    if (!data.date_of_birth || selectedDate >= today) {
+      setDateError(true);
+      errorState = false;
+    } else {
+      setDateError(false);
+    }
+
+    return errorState;
+  };
+
+  const handleNext = () => {
+    if (validate()) {
+      onNext();
+    }
+  };
+
+  return (
+    <div className="flex flex-col md:flex-row justify-center items-center font-poppins h-screen">
+      <div className="flex flex-row p-6">
+        <div className="hidden md:block">
+          <img
+            src="/images/login.png"
+            className="rounded-xl object-cover"
+            alt="Login"
+          />
+        </div>
+        <div className="flex flex-col w-full md:w-1/2">
+          <div className="bg-white flex flex-col justify-between rounded-xl m-5 p-5 mt-0 min-h-[633px]">
+            <div className="flex flex-row justify-center items-center">
+              <img src="/images/main_logos.jpg" />
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <h6 className="font-semibold text-2xl">Create Your Account</h6>
+              <p className="text-white-200 leading-loose tracking-wide">
+                Welcome to Kidzania Trading App -- we can't wait to introduce
+                you into a world of limitless possibilities
+              </p>
+            </div>
+
+            <div className="w-full flex flex-col justify-center items-center gap-2">
+              <FormField
+                type="text"
+                name="first_name"
+                startAdornmentUrl="/images/profile.svg"
+                placeholder="First Name"
+                value={data.first_name}
+                onChange={handleInputChange}
+                error={firstNameError}
+                errorMessage="Please enter a valid first name"
+              />
+
+              <FormField
+                type="text"
+                name="last_name"
+                startAdornmentUrl="/images/profile.svg"
+                placeholder="Last Name"
+                value={data.last_name}
+                onChange={handleInputChange}
+                error={lastNameError}
+                errorMessage="Please enter a valid last name"
+              />
+
+              <DatePicker
+                selected={
+                  isValid(parse(data.date_of_birth, "yyyy/MM/dd", new Date()))
+                    ? parse(data.date_of_birth, "yyyy/MM/dd", new Date())
+                    : null
+                }
+                onChange={handleDateChange}
+                customInput={
+                  <FormField
+                    type="text"
+                    name="date_of_birth"
+                    startAdornmentUrl="/images/calendar.svg"
+                    placeholder="Date of Birth"
+                    value={data.date_of_birth}
+                    error={dateError}
+                    errorMessage="Please enter a valid date"
+                  />
+                }
+                showYearDropdown
+                showMonthDropdown
+                dropdownMode="select"
+                dateFormat="yyyy/MM/dd"
+                maxDate={new Date()}
+                yearDropdownItemNumber={100}
+                shouldCloseOnSelect={true}
+              />
+            </div>
+
+            <div className="w-full flex flex-col justify-center items-center gap-2 mt-5">
+              <Button
+                name="Sign Up"
+                onClick={handleNext}
+                otherClasses="bg-purple text-white w-full"
+              />
+              <p>
+                Already had an account?{" "}
+                <a href="/login" className="text-purple font-semibold">
+                  Login
+                </a>
+              </p>
+            </div>
+          </div>
+
+          <div className="bg-white flex flex-row items-center  m-5 p-5 mt-4 px-10 h-[122] rounded-xl">
+            <img src="/images/profilelist.svg" />
+            <div className="mr-10 ml-6">
+              <h6 className="text-[14px]">Join 100k+ happy users!</h6>
+              <p className="text-[14px] text-white-200">
+                Click the arrow on right to see what our current achieved so
+                far.
+              </p>
+            </div>
+            <a href="/" className="bg-purple p-5 rounded-full">
+              <img src="/images/rightline.svg" className="w-10" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default RegisterPhase1;
