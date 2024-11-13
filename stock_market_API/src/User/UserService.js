@@ -1,6 +1,7 @@
 class UserService {
-  constructor({ userRepo }) {
+  constructor({ userRepo, userProfitRepo }) {
     this.userRepo = userRepo;
+    this.userProfitRepo = userProfitRepo;
   }
 
   register = async (req) => {
@@ -30,6 +31,20 @@ class UserService {
     const user = await this.userRepo.getUserByUsername(username);
 
     return user;
+  };
+
+  getUserLeaderboards = async () => {
+    const highestNumberOfTrades =
+      await this.userRepo.getHighestNumberOfTrades();
+    const highestReturn = await this.userProfitRepo.getHighestReturn();
+    const biggestInvestment = await this.userRepo.getBiggestInvestment();
+
+    const leaderboards = {
+      highestNumberOfTrades: highestNumberOfTrades,
+      highestReturn: highestReturn,
+      biggestInvestment: biggestInvestment,
+    };
+    return leaderboards;
   };
 }
 

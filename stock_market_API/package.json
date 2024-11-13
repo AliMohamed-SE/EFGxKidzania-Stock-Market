@@ -27,6 +27,7 @@
     "mongoose": "^8.7.2",
     "morgan": "^1.10.0",
     "pug": "^3.0.3",
+    "redis": "^4.7.0",
     "serve-favicon": "^2.5.0",
     "validator": "^13.12.0"
   },

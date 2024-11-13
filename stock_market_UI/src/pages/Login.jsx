@@ -4,11 +4,12 @@ import Button from "../components/Button.jsx";
 import { userService } from "../services/user.service.js";
 import { useAuth } from "../providers/AuthProvider.jsx";
 import { useNavigate } from "react-router";
+import UserEntity from "../entities/userEntity.js";
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const { setUser } = useAuth();
+  const { user, setUser } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState(false);
@@ -34,7 +35,7 @@ const Login = () => {
       }
 
       const user = await userService.login(username, password);
-      setUser(user);
+      await setUser(new UserEntity(user));
       sessionStorage.setItem("token", JSON.stringify(user));
       navigate("/");
     } catch (error) {
@@ -45,14 +46,10 @@ const Login = () => {
   };
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
-
-    if (token) {
-      const user = JSON.parse(token);
-      setUser(user);
+    if (user) {
       navigate("/");
     }
-  }, [navigate]);
+  }, [navigate, user]);
 
   return (
     <div className="flex flex-col md:flex-row justify-center items-center font-poppins h-screen">
@@ -85,7 +82,10 @@ const Login = () => {
                   startAdornmentUrl="/images/profile.svg"
                   placeholder="Username"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
+                  onChange={(e) => {
+                    setUsernameError("");
+                    setUsername(e.target.value);
+                  }}
                   error={usernameError}
                   errorMessage="Please enter your username"
                 />
@@ -95,14 +95,17 @@ const Login = () => {
                   startAdornmentUrl="/images/password.svg"
                   placeholder="Enter your password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPasswordError("");
+                    setPassword(e.target.value);
+                  }}
                   error={passwordError}
                   errorMessage="Please enter your password"
                 />
               </div>
             </div>
             {loginError && (
-              <p className="text-red-500 mt-2 ml-2">{loginError}</p>
+              <p className="text-red-500 mt-2 ml-2 text-center">{loginError}</p>
             )}
 
             <div className="w-full flex flex-col justify-center items-center gap-2">

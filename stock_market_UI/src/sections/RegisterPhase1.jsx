@@ -83,7 +83,10 @@ const RegisterPhase1 = ({ data, updateData, onNext }) => {
                 startAdornmentUrl="/images/profile.svg"
                 placeholder="First Name"
                 value={data.first_name}
-                onChange={handleInputChange}
+                onChange={(e) => {
+                  setFirstNameError(false);
+                  handleInputChange(e);
+                }}
                 error={firstNameError}
                 errorMessage="Please enter a valid first name"
               />
@@ -94,37 +97,42 @@ const RegisterPhase1 = ({ data, updateData, onNext }) => {
                 startAdornmentUrl="/images/profile.svg"
                 placeholder="Last Name"
                 value={data.last_name}
-                onChange={handleInputChange}
+                onChange={(e) => {
+                  setLastNameError(false);
+                  handleInputChange(e);
+                }}
                 error={lastNameError}
                 errorMessage="Please enter a valid last name"
               />
 
-              <DatePicker
-                selected={
-                  isValid(parse(data.date_of_birth, "yyyy/MM/dd", new Date()))
-                    ? parse(data.date_of_birth, "yyyy/MM/dd", new Date())
-                    : null
-                }
-                onChange={handleDateChange}
-                customInput={
-                  <FormField
-                    type="text"
-                    name="date_of_birth"
-                    startAdornmentUrl="/images/calendar.svg"
-                    placeholder="Date of Birth"
-                    value={data.date_of_birth}
-                    error={dateError}
-                    errorMessage="Please enter a valid date"
-                  />
-                }
-                showYearDropdown
-                showMonthDropdown
-                dropdownMode="select"
-                dateFormat="yyyy/MM/dd"
-                maxDate={new Date()}
-                yearDropdownItemNumber={100}
-                shouldCloseOnSelect={true}
-              />
+              <div className="w-full -translate-x-2">
+                <DatePicker
+                  selected={
+                    isValid(parse(data.date_of_birth, "yyyy/MM/dd", new Date()))
+                      ? parse(data.date_of_birth, "yyyy/MM/dd", new Date())
+                      : null
+                  }
+                  onChange={handleDateChange}
+                  customInput={
+                    <FormField
+                      type="text"
+                      name="date_of_birth"
+                      startAdornmentUrl="/images/calendar.svg"
+                      placeholder="Date of Birth"
+                      value={data.date_of_birth}
+                      error={dateError}
+                      errorMessage="Please enter a valid date"
+                    />
+                  }
+                  showYearDropdown
+                  showMonthDropdown
+                  dropdownMode="select"
+                  dateFormat="yyyy/MM/dd"
+                  maxDate={new Date()}
+                  yearDropdownItemNumber={100}
+                  shouldCloseOnSelect={true}
+                />
+              </div>
             </div>
 
             <div className="w-full flex flex-col justify-center items-center gap-2 mt-5">

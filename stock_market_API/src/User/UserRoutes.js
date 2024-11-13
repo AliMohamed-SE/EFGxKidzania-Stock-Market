@@ -14,8 +14,12 @@ const UserRoutes = (userController) => {
     userController.login(req, res)
   );
 
-  router.get("/:username", (req, res) =>
+  router.get("/get-username/:username", (req, res) =>
     userController.getUserByUsername(req, res)
+  );
+
+  router.get("/get-leaderboards", (req, res) =>
+    userController.getUserLeaderboards(req, res)
   );
 
   return router;

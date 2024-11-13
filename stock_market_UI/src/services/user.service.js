@@ -8,7 +8,7 @@ const login = async (username, password) => {
       password,
     });
 
-    const user = new UserEntity(response.data);
+    const user = response.data;
 
     return user;
   } catch (error) {
@@ -22,9 +22,8 @@ const register = async (registerData) => {
     const response = await apiClient.post("users/register", {
       ...registerData,
     });
-    console.log(response);
 
-    const user = new UserEntity(response.data);
+    const user = response.data;
 
     return user;
   } catch (error) {
@@ -43,8 +42,19 @@ const isUsernameAvailable = async (username) => {
   }
 };
 
+const fetchUser = async (username) => {
+  try {
+    const response = await apiClient.get(`users/get-username/${username}`);
+
+    return response.data;
+  } catch (error) {
+    throw new Error("An unexpected error occurred");
+  }
+};
+
 export const userService = {
   login,
   register,
   isUsernameAvailable,
+  fetchUser,
 };

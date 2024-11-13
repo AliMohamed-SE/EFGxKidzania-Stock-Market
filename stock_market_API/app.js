@@ -7,8 +7,15 @@ import cookieParser from "cookie-parser";
 import bodyParser from "body-parser";
 import cors from "cors";
 import container from "./container.js";
-import UserRoutes from "./src/User/UserRoutes.js";
 import { ValidationError } from "express-validation";
+import { seedDatabase } from "./db/Seeders/initialSeed.js";
+
+// Routes imports
+import UserRoutes from "./src/User/UserRoutes.js";
+import CompanyRoutes from "./src/Company/CompanyRoutes.js";
+import StocksHistoryRoutes from "./src/StocksHistory/StocksHistoryRoutes.js";
+import UserStocksRoutes from "./src/UserStocks/UserStocksRoutes.js";
+import UserProfitRoutes from "./src/UserProfit/UserProfitRoutes.js";
 
 config();
 const app = express();
@@ -23,8 +30,16 @@ app.use(cookieParser());
 
 // Define the routes
 const userController = container.resolve("userController");
+const companyController = container.resolve("companyController");
+const stocksHistoryController = container.resolve("stocksHistoryController");
+const userStocksController = container.resolve("userStocksController");
+const userProfitController = container.resolve("userProfitController");
 
 app.use("/api/users", UserRoutes(userController));
+app.use("/api/companies", CompanyRoutes(companyController));
+app.use("/api/stocksHistory", StocksHistoryRoutes(stocksHistoryController));
+app.use("/api/userStocks", UserStocksRoutes(userStocksController));
+app.use("/api/userProfit", UserProfitRoutes(userProfitController));
 
 // Error Handler
 app.use((err, req, res, next) => {
@@ -44,6 +59,8 @@ const startServer = async () => {
   try {
     // Start DB connection
     await connectToDB();
+
+    // await seedDatabase();
 
     // Start Server
     app.listen(PORT, (err) => {

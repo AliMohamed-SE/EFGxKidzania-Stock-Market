@@ -6,8 +6,6 @@ import { userService } from "../services/user.service";
 import { useAuth } from "../providers/AuthProvider";
 
 const RegisterPhase4 = ({ data, updateData, onNext, onBack }) => {
-  const { setUser } = useAuth();
-
   const [gender, setGender] = useState("male");
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -19,17 +17,22 @@ const RegisterPhase4 = ({ data, updateData, onNext, onBack }) => {
 
   const register = async () => {
     setLoading(true);
-    await updateData({ ...data, avatar: selectedAvatar });
     try {
-      const user = await userService.register(data);
-      await setUser(user);
-      sessionStorage.setItem("token", JSON.stringify(user));
+      // First, ensure data is updated with the selected avatar
+      await updateData({ ...data, avatar: selectedAvatar });
+
+      // Now that data is updated, call the register function
+      await userService.register({
+        ...data,
+        avatar: selectedAvatar,
+      });
 
       onNext();
     } catch (error) {
-      console.log("Failed to register!");
+      console.log(error.message);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   useEffect(() => {

@@ -12,9 +12,9 @@ import Navbar from "../components/Navbar";
 
 const Register = () => {
   const navigate = useNavigate();
-  const { setUser } = useAuth();
+  const { user } = useAuth();
 
-  const [registerationPhase, setRegisterationPhase] = useState(4);
+  const [registerationPhase, setRegisterationPhase] = useState(1);
   const [registerData, setRegisterData] = useState({
     first_name: "",
     last_name: "",
@@ -25,14 +25,10 @@ const Register = () => {
   });
 
   useEffect(() => {
-    const token = sessionStorage.getItem("token");
-
-    if (token) {
-      const user = JSON.parse(token);
-      setUser(user);
+    if (user) {
       navigate("/");
     }
-  }, [navigate, setUser]);
+  }, [navigate, user]);
 
   const handleNextPhase = () => {
     setRegisterationPhase((prev) => prev + 1);
@@ -80,7 +76,7 @@ const Register = () => {
           onBack={handleBackPhase}
         />
       )}
-      {registerationPhase === 5 && <RegisterPhase5 />}
+      {registerationPhase === 5 && <RegisterPhase5 data={registerData} />}
     </div>
   );
 };

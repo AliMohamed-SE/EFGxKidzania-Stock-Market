@@ -11,7 +11,7 @@ class UserController {
       if (error.message === "this username is invalid") {
         return res.status(409).json({ error: "this username is invalid" });
       }
-      res.status(500).json({ error: "An unexpected error occurred" });
+      res.status(500).json({ error: error.message });
     }
   };
 
@@ -47,6 +47,16 @@ class UserController {
 
       // User found, return 200 status with user data
       res.status(200).json(user);
+    } catch (error) {
+      res.status(500).json({ error: "An unexpected error occurred" });
+    }
+  };
+
+  getUserLeaderboards = async (req, res) => {
+    try {
+      const leaderboards = await this.userService.getUserLeaderboards();
+
+      res.status(200).json(leaderboards);
     } catch (error) {
       res.status(500).json({ error: "An unexpected error occurred" });
     }

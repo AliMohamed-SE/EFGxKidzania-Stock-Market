@@ -12,6 +12,7 @@ class UserEntity {
     number_of_assets,
     total_invested_amount,
     number_of_trades,
+    createdAt,
   }) {
     this._id = _id;
     this.first_name = first_name;
@@ -25,10 +26,21 @@ class UserEntity {
     this.number_of_assets = number_of_assets;
     this.total_invested_amount = total_invested_amount;
     this.number_of_trades = number_of_trades;
+    this.createdAt = createdAt;
   }
 
   getFullName() {
     return `${this.first_name} ${this.last_name}`;
+  }
+
+  getCreatedDate() {
+    const createdAtDate = new Date(this.createdAt);
+    const formattedDate = createdAtDate.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+    });
+
+    return formattedDate;
   }
 }
 

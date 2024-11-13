@@ -69,7 +69,7 @@ const RegisterPhase3 = ({ data, updateData, onNext, onBack }) => {
           </div>
           <div className="w-[100%]">
             <FormField
-              type="text"
+              type="password"
               name="password"
               startAdornmentUrl="/images/password.svg"
               endAdornmentUrl={passwordAcceptable ? "/images/success.svg" : ""}
