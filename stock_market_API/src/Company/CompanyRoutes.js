@@ -6,6 +6,14 @@ const CompanyRoutes = (companyController) => {
 
   router.post("/", (req, res) => companyController.createCompany(req, res));
 
+  router.put("/update-company", (req, res) =>
+    companyController.updateCompany(req, res)
+  );
+
+  router.put("/update-companies", (req, res) =>
+    companyController.updateCompanies(req, res)
+  );
+
   router.get("/get-companies/:balance", (req, res) =>
     companyController.getCompanies(req, res)
   );

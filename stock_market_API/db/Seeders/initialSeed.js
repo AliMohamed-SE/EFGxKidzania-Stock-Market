@@ -96,8 +96,8 @@ const companiesData = [
 // Function to generate and insert companies and their stock history records
 export const seedDatabase = async () => {
   // Insert companies into the database
-  const insertedCompanies = await Company.insertMany(companiesData);
-  console.log("Companies inserted successfully.");
+  // const insertedCompanies = await Company.insertMany(companiesData);
+  // console.log("Companies inserted successfully.");
 
   // Generate stock history for each company
   const startDate = new Date("2024-10-01");

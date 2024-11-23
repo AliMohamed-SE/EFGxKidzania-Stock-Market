@@ -1,12 +1,20 @@
 class UserProfitService {
-  constructor({ userProfitRepo }) {
+  constructor({ userProfitRepo, logger }) {
     this.userProfitRepo = userProfitRepo;
+    this.logger = logger;
   }
 
-  getAllUserProfit = async (userId) => {
-    const userProfits = await this.userProfitRepo.getAllUserProfit(userId);
+  getAllUserProfit = async (userId, correlationId) => {
+    try {
+      const userProfits = await this.userProfitRepo.getAllUserProfit(
+        userId,
+        correlationId
+      );
 
-    return userProfits;
+      return userProfits;
+    } catch (error) {
+      throw error;
+    }
   };
 }
 

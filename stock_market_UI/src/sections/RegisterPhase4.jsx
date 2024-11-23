@@ -6,6 +6,7 @@ import { userService } from "../services/user.service";
 import { useAuth } from "../providers/AuthProvider";
 
 const RegisterPhase4 = ({ data, updateData, onNext, onBack }) => {
+  const { backendUrl } = useAuth();
   const [gender, setGender] = useState("male");
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -97,7 +98,7 @@ const RegisterPhase4 = ({ data, updateData, onNext, onBack }) => {
           >
             <img
               key={index}
-              src={`/images/avatars/${avatar}.svg`}
+              src={`${backendUrl}/images/avatars/${avatar}.svg`}
               alt={`Avatar ${index + 1}`}
               className={`w-[230px] object-cover rounded-3xl border shadow-md ${
                 avatar === selectedAvatar && "border-purple"

@@ -148,11 +148,13 @@ const BuyStockWindow = ({ company }) => {
           <Stack spacing={1} className="p-3 pl-4">
             <div>
               <h3>Available Balance</h3>
-              <Price
-                price={user.wallet_balance.toLocaleString()}
-                styles="absolute -right-4 -top-0.5 w-4"
-                textStyles={"text-white-200"}
-              />
+              {user && (
+                <Price
+                  price={user.wallet_balance.toLocaleString()}
+                  styles="absolute -right-4 -top-0.5 w-4"
+                  textStyles={"text-white-200"}
+                />
+              )}
             </div>
             <div className="flex flex-row justify-between items-center">
               {" "}

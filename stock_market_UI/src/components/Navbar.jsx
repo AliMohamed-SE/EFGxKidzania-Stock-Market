@@ -3,18 +3,20 @@ import { Chip, Avatar, Box } from "@mui/material";
 import { useAuth } from "../providers/AuthProvider";
 
 const Navbar = () => {
-  const { user } = useAuth();
+  const { user, backendUrl } = useAuth();
   return (
-    <div className="flex flex-row justify-center items-center h-24 bg-white w-screen overflow-hidden">
-      <img src="/images/main_logos.jpg" />
+    <div className="flex flex-row justify-between items-center h-24 bg-white w-screen overflow-hidden">
+      <div className="w-[58%] flex justify-end">
+        <img src="/images/main_logos.jpg" />
+      </div>
       {user && (
-        <div className="h-16 w-[270px] rounded-full bg-white-100 absolute right-5">
-          <div className="flex flex-row justify-between items-center w-[100%] h-[100%] p-3">
-            <div className="flex flex-row justify-center items-center">
+        <div className="pr-6">
+          <div className="h-16 rounded-full bg-white-100 flex flex-row justify-between items-center w-[100%] p-3">
+            <div className="flex flex-row justify-center items-center pr-5">
               <div className="bg-[#D88EA9] rounded-full w-12 h-12 flex justify-center items-center">
                 <Avatar
                   alt="avatar"
-                  src={`/images/avatars/${user.avatar}.svg`}
+                  src={`${backendUrl}/images/avatars/${user.avatar}.svg`}
                   sx={{ width: 46, height: 46 }}
                 />
               </div>
@@ -26,7 +28,7 @@ const Navbar = () => {
                 <p className="text-sm font-bold">
                   Balance:{" "}
                   <span className="font-normal text-white-200 relative">
-                    {user.wallet_balance.toLocaleString()}{" "}
+                    {user.getTotalBalance().toLocaleString()}{" "}
                     <img
                       src="/images/KidZosicon.svg"
                       alt="Kidzos coins"

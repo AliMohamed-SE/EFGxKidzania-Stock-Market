@@ -1,4 +1,6 @@
-import { createContainer, asClass } from "awilix";
+import { createContainer, asClass, asValue } from "awilix";
+import logger from "./src/util/logger.js";
+
 import UserRepo from "./src/User/UserRepo.js";
 import UserService from "./src/User/UserService.js";
 import UserController from "./src/User/UserController.js";
@@ -20,9 +22,19 @@ import TransactionRepo from "./src/Transaction/TransactionRepo.js";
 import UserProfitRepo from "./src/UserProfit/UserProfitRepo.js";
 import UserProfitService from "./src/UserProfit/UserProfitService.js";
 import UserProfitController from "./src/UserProfit/UserProfitController.js";
+
+import UserWithdrawRepo from "./src/UserWithdraw/UserWithdrawRepo.js";
+import UserWithdrawService from "./src/UserWithdraw/UserWithdrawService.js";
+import UserWithdrawController from "./src/UserWithdraw/UserWithdrawController.js";
+
+import AdminRepo from "./src/Admin/AdminRepo.js";
+import AdminService from "./src/Admin/AdminService.js";
+import AdminController from "./src/Admin/AdminController.js";
 const container = createContainer();
 
 container.register({
+  logger: asValue(logger),
+
   userRepo: asClass(UserRepo).scoped(),
   userService: asClass(UserService).scoped(),
   userController: asClass(UserController).scoped(),
@@ -44,6 +56,14 @@ container.register({
   userProfitRepo: asClass(UserProfitRepo).scoped(),
   userProfitService: asClass(UserProfitService).scoped(),
   userProfitController: asClass(UserProfitController).scoped(),
+
+  userWithdrawRepo: asClass(UserWithdrawRepo).scoped(),
+  userWithdrawService: asClass(UserWithdrawService).scoped(),
+  userWithdrawController: asClass(UserWithdrawController).scoped(),
+
+  adminRepo: asClass(AdminRepo).scoped(),
+  adminService: asClass(AdminService).scoped(),
+  adminController: asClass(AdminController).scoped(),
 });
 
 export default container;

@@ -10,6 +10,8 @@ import TabPanel from "@mui/lab/TabPanel";
 import MarketOverview from "../sections/MarketOverview";
 import Loading from "../components/Loading";
 import MyPortfolio from "../sections/MyPortfolio";
+import LeaderboardsTable from "../sections/LeaderboardsTable";
+import WithdrawSection from "../sections/WithdrawSection";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -36,12 +38,17 @@ const Home = () => {
   }
 
   return (
-    <section className="overflow-hidden">
+    <section className="w-screen h-screen overflow-hidden">
       <Navbar />
-      <Box sx={{ width: "100%", padding: 3, paddingTop: 6 }}>
+      <Box
+        sx={{
+          width: "100%",
+          padding: 4,
+          paddingTop: 6,
+          flexGrow: 1,
+        }}
+      >
         <TabContext value={view}>
-          {" "}
-          {/* Controlled by `view` */}
           <Box>
             <TabList
               onChange={handleChange}
@@ -56,7 +63,7 @@ const Home = () => {
                 "Market Overview",
                 "My Portfolio",
                 "Withdraw",
-                "Leader board",
+                "Leaderboard",
               ].map((label) => (
                 <Tab
                   key={label}
@@ -66,7 +73,7 @@ const Home = () => {
                     fontSize: "24px",
                     color: "#9AA0A6",
                     fontWeight: "normal",
-                    fontFamily: "poppins",
+                    textTransform: "none", // Prevents automatic capitalization
                     transition: "all 0.3s ease",
                     "&.Mui-selected": {
                       backgroundColor: "#6143F0",
@@ -81,13 +88,13 @@ const Home = () => {
             <MarketOverview balance={user.wallet_balance} />
           </TabPanel>
           <TabPanel value="My Portfolio" sx={{ padding: 0 }}>
-            <MyPortfolio />
+            <MyPortfolio withdrawHandle={(e) => handleChange(e, "Withdraw")} />
           </TabPanel>
           <TabPanel value="Withdraw" sx={{ padding: 0 }}>
-            Item Three
+            <WithdrawSection navigationHandle={handleChange} />
           </TabPanel>
-          <TabPanel value="Leader board" sx={{ padding: 0 }}>
-            Item Four
+          <TabPanel value="Leaderboard" sx={{ padding: 0 }}>
+            <LeaderboardsTable styles="" />
           </TabPanel>
         </TabContext>
       </Box>

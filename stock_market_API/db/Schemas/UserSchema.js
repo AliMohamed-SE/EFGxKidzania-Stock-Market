@@ -52,6 +52,11 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: 0,
     },
+    previous_balance: {
+      type: Number,
+      required: true,
+      default: 0,
+    },
     total_profit: {
       type: Number,
       required: true,

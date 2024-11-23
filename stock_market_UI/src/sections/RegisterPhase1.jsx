@@ -4,6 +4,7 @@ import Button from "../components/Button.jsx";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, parse, isValid } from "date-fns";
+import { Link } from "react-router-dom";
 
 const RegisterPhase1 = ({ data, updateData, onNext }) => {
   const [firstNameError, setFirstNameError] = useState(false);
@@ -159,9 +160,13 @@ const RegisterPhase1 = ({ data, updateData, onNext }) => {
                 far.
               </p>
             </div>
-            <a href="/" className="bg-purple p-5 rounded-full">
+            <Link
+              to="/leaderboards"
+              state={{ from: "/register" }}
+              className="bg-purple p-5 rounded-full"
+            >
               <img src="/images/rightline.svg" className="w-10" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>

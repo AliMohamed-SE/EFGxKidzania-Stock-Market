@@ -5,14 +5,14 @@ import { Button, IconButton, Stack, Tooltip } from "@mui/material";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 
 const UserProfileInfo = ({ successRate, numberOfAssets }) => {
-  const { user } = useAuth();
+  const { user, backendUrl } = useAuth();
   return (
     <Stack direction={"row"}>
       {/* 1st Section */}
       <div className="flex flex-col items-center w-[300px] p-1 border-r-[1px] border-[#120804] h-[300px] gap-6">
         <div className="bg-white-100 rounded-full w-[205px] h-[205px] flex justify-center items-center">
           <img
-            src={`/images/avatars/${user.avatar}.svg`}
+            src={`${backendUrl}/images/avatars/${user.avatar}.svg`}
             alt="Avatar"
             className="bg-[#D88EA9] rounded-full w-[150px] h-[150px]"
           />
@@ -22,7 +22,8 @@ const UserProfileInfo = ({ successRate, numberOfAssets }) => {
             {user.getFullName()}
           </h3>
           <p className="text-2xl text-white-300">
-            Joined {user.getCreatedDate()}
+            {/* Joined {user.getCreatedDate()} */}
+            Joined March, 2024
           </p>
         </div>
       </div>
@@ -108,18 +109,12 @@ const UserProfileInfo = ({ successRate, numberOfAssets }) => {
             <div>
               <p className="font-semibold mb-2 flex items-center">
                 Success Rate{" "}
-                <Tooltip disableFocusListener disableTouchListener title="Add">
-                  <IconButton className="p-0 m-0">
-                    <HelpOutlineIcon className="text-black" />
-                  </IconButton>
-                </Tooltip>
               </p>
               <div className="flex flex-row items-center justify-between pr-2">
                 <div className="w-[85%] h-3 bg-[#E7ECE9] rounded-full">
                   <div
-                    className={`w-[${successRate.toFixed(
-                      0
-                    )}%] h-3 bg-[#239A3C] rounded-full`}
+                    className="h-3 bg-[#239A3C] rounded-full"
+                    style={{ width: `${successRate.toFixed(0)}%` }}
                   />
                 </div>
                 <p className={`${successRate > 0 && "text-[#239A3C]"}`}>

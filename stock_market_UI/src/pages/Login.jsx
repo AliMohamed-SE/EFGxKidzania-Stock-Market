@@ -5,11 +5,12 @@ import { userService } from "../services/user.service.js";
 import { useAuth } from "../providers/AuthProvider.jsx";
 import { useNavigate } from "react-router";
 import UserEntity from "../entities/userEntity.js";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const navigate = useNavigate();
 
-  const { user, setUser } = useAuth();
+  const { user, setUser, admin } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [usernameError, setUsernameError] = useState(false);
@@ -49,6 +50,9 @@ const Login = () => {
     if (user) {
       navigate("/");
     }
+    if (admin) {
+      navigate("/admin/home");
+    }
   }, [navigate, user]);
 
   return (
@@ -83,7 +87,7 @@ const Login = () => {
                   placeholder="Username"
                   value={username}
                   onChange={(e) => {
-                    setUsernameError("");
+                    setUsernameError(false);
                     setUsername(e.target.value);
                   }}
                   error={usernameError}
@@ -96,7 +100,7 @@ const Login = () => {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => {
-                    setPasswordError("");
+                    setPasswordError(false);
                     setPassword(e.target.value);
                   }}
                   error={passwordError}
@@ -132,9 +136,13 @@ const Login = () => {
                 far.
               </p>
             </div>
-            <a href="/" className="bg-purple p-5 rounded-full">
+            <Link
+              to="/leaderboards"
+              state={{ from: "/login" }}
+              className="bg-purple p-5 rounded-full"
+            >
               <img src="/images/rightline.svg" className="w-10" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>

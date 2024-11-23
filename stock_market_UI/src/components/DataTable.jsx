@@ -7,14 +7,12 @@ import {
   TableHead,
   TableRow,
   Button,
-  Checkbox,
   Box,
 } from "@mui/material";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 
 const DataTable = ({ data, thirdColumn, onViewStock }) => {
   // Define the header labels based on the third column prop
-  const headers = ["Company", "Current Price", thirdColumn, "Action"];
+  const headers = ["#", "Company", "Current Price", thirdColumn, "Action"];
 
   return (
     <TableContainer
@@ -26,18 +24,6 @@ const DataTable = ({ data, thirdColumn, onViewStock }) => {
       <Table sx={{ borderCollapse: "collapse" }}>
         <TableHead>
           <TableRow>
-            <TableCell
-              sx={{
-                position: "sticky",
-                top: 0,
-                backgroundColor: "#9AA0A6",
-                zIndex: 1,
-                fontWeight: "bold",
-                border: "none",
-              }}
-            >
-              <Checkbox />
-            </TableCell>
             {headers.map((header, index) => (
               <TableCell
                 key={header}
@@ -57,26 +43,46 @@ const DataTable = ({ data, thirdColumn, onViewStock }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {data.map((company) => (
+          {data.map((company, index) => (
             <TableRow key={company.id || company._id}>
-              <TableCell sx={{ border: "none" }}>
-                <Checkbox />
+              <TableCell
+                align="center"
+                sx={{ border: "none", fontWeight: "bold" }}
+              >
+                {index + 1}
               </TableCell>
               <TableCell
                 align="left"
                 sx={{
                   border: "none",
-                  maxWidth: 150,
+                  maxWidth: 150, // Adjust as needed for your layout
                 }}
               >
-                <div className="flex items-center gap-2">
+                <div
+                  className="flex items-center gap-2"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    maxWidth: "150px", // Ensure maxWidth is applied
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis", // Adds the "..." for overflow
+                  }}
+                >
                   <img
                     src={`images/logos/${company.acronym}.svg`}
                     className="w-10 h-10"
+                    alt={`${company.name} logo`}
                   />
-                  {company.name}
+                  <span
+                    style={{ textOverflow: "ellipsis", overflow: "hidden" }}
+                  >
+                    {company.name}
+                  </span>
                 </div>
               </TableCell>
+
               <TableCell align="center" sx={{ border: "none" }}>
                 <div className="flex gap-1 justify-center items-center font-semibold">
                   {company.current_price}

@@ -52,9 +52,20 @@ const fetchUser = async (username) => {
   }
 };
 
+const fetchLeaderboards = async () => {
+  try {
+    const response = await apiClient.get(`users/get-leaderboards`);
+
+    return response.data;
+  } catch (error) {
+    throw new Error("An unexpected error occurred");
+  }
+};
+
 export const userService = {
   login,
   register,
   isUsernameAvailable,
   fetchUser,
+  fetchLeaderboards,
 };

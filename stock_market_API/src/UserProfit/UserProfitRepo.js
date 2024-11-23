@@ -1,35 +1,70 @@
 import UserProfit from "../../db/Schemas/UserProfitSchema.js";
 
 class UserProfitRepo {
-  constructor(db) {
-    this.db = db;
+  constructor({ logger }) {
+    this.logger = logger;
   }
 
-  async addUserProfit(data) {
-    const existingUserProfit = await UserProfit.findOne({
-      userId: data.userId,
-      companyId: data.companyId,
-    });
+  async addUserProfit(data, correlationId) {
+    try {
+      this.logger.info("Searching for existing userProfit record", {
+        correlationId,
+        userId: data.userId,
+        companyId: data.companyId,
+      });
 
-    if (existingUserProfit) {
-      existingUserProfit.profit += data.profit;
-      existingUserProfit.investedAmount += data.investedAmount;
-      return await existingUserProfit.save();
-    } else {
-      const newUserProfit = new UserProfit(data);
-      return await newUserProfit.save();
+      const existingUserProfit = await UserProfit.findOne({
+        userId: data.userId,
+        companyId: data.companyId,
+      });
+
+      if (existingUserProfit) {
+        this.logger.info("Record Found - Updating", {
+          correlationId,
+          profit: data.profit,
+          investedAmount: data.investedAmount,
+        });
+
+        existingUserProfit.profit += data.profit;
+        existingUserProfit.investedAmount += data.investedAmount;
+        return await existingUserProfit.save();
+      } else {
+        this.logger.info("Record Not Found - Creating new Record", {
+          correlationId,
+          data,
+        });
+
+        const newUserProfit = new UserProfit(data);
+        return await newUserProfit.save();
+      }
+    } catch (error) {
+      throw error;
     }
   }
 
-  async getAllUserProfit(userId) {
-    const userProfits = await UserProfit.find({
-      userId: userId,
-    }).populate("companyId");
-    return userProfits;
+  // Retrieves all user profits for a given user
+  async getAllUserProfit(userId, correlationId) {
+    try {
+      this.logger.info("Retrieving all userProfit records for user", {
+        correlationId,
+        Id: userId,
+      });
+      const userProfits = await UserProfit.find({ userId }).populate(
+        "companyId"
+      );
+      return userProfits;
+    } catch (error) {
+      throw error;
+    }
   }
 
-  async getHighestReturn() {
+  // Gets the top users by highest return on investment (ROI)
+  async getHighestReturn(correlationId) {
     try {
+      this.logger.info("Get Top 4 Users with highest return", {
+        correlationId,
+      });
+
       const topUsers = await UserProfit.aggregate([
         {
           $group: {
@@ -54,12 +89,8 @@ class UserProfitRepo {
             },
           },
         },
-        {
-          $sort: { avgROI: -1 },
-        },
-        {
-          $limit: 4,
-        },
+        { $sort: { avgROI: -1 } },
+        { $limit: 4 },
         {
           $project: {
             userId: "$_id",
@@ -70,15 +101,23 @@ class UserProfitRepo {
         },
       ]);
 
-      await UserProfit.populate(topUsers, {
+      // Populate user details in the top users
+      const populatedUsers = await UserProfit.populate(topUsers, {
         path: "userId",
-        select: "first_name last_name",
+        select: "first_name last_name avatar",
       });
 
-      return topUsers;
+      // Flatten the result to include user info
+      return populatedUsers.map((user) => ({
+        first_name: user.userId.first_name,
+        last_name: user.userId.last_name,
+        avatar: user.userId.avatar,
+        totalProfit: user.totalProfit,
+        totalInvestedAmount: user.totalInvestedAmount,
+        avgROI: user.avgROI,
+      }));
     } catch (error) {
-      console.error("Error fetching top users by ROI:", error);
-      throw error;
+      throw error; // Propagate the error to be handled by the controller
     }
   }
 }

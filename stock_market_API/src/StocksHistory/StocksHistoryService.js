@@ -1,32 +1,60 @@
 class StocksHistoryService {
-  constructor({ stocksHistoryRepo }) {
+  constructor({ stocksHistoryRepo, logger }) {
     this.stocksHistoryRepo = stocksHistoryRepo;
+    this.logger = logger;
   }
 
-  getStocksHistory = async (companyId) => {
-    const history = await this.stocksHistoryRepo.getStocksHistory(companyId);
+  getStocksHistory = async (companyId, correlationId) => {
+    try {
+      const history = await this.stocksHistoryRepo.getStocksHistory(
+        companyId,
+        correlationId
+      );
 
-    return history;
+      return history;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  createStocksHistory = async (data) => {
+  createStocksHistory = async (data, correlationId) => {
     const { companyId, date } = data;
 
     let stocksHistory;
+    try {
+      const existingStocksHistory =
+        await this.stocksHistoryRepo.getStocksHistoryByDate(
+          companyId,
+          date,
+          correlationId
+        );
 
-    const existingStocksHistory =
-      await this.stocksHistoryRepo.getStocksHistoryByDate(companyId, date);
+      if (existingStocksHistory) {
+        this.logger.info("createStocksHistory - History exists, updating", {
+          companyId,
+          date,
+          correlationId,
+        });
+        stocksHistory = await this.stocksHistoryRepo.updateStocksHistory(
+          existingStocksHistory._id,
+          data,
+          correlationId
+        );
+      } else {
+        this.logger.info(
+          "createStocksHistory - No existing history, creating new entry",
+          { companyId, date, correlationId }
+        );
+        stocksHistory = await this.stocksHistoryRepo.addStocksHistory(
+          data,
+          correlationId
+        );
+      }
 
-    if (existingStocksHistory) {
-      stocksHistory = await this.stocksHistoryRepo.updateStocksHistory(
-        existingStocksHistory._id,
-        data
-      );
-    } else {
-      stocksHistory = await this.stocksHistoryRepo.addStocksHistory(data);
+      return stocksHistory;
+    } catch (error) {
+      throw error;
     }
-
-    return stocksHistory;
   };
 }
 

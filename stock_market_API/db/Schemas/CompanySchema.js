@@ -9,16 +9,13 @@ const companySchema = mongoose.Schema(
     acronym: {
       type: String,
       required: false,
+      unique: true,
       minlength: [2, "Acronyms must be at least 2 characters long"],
       maxlength: [5, "Acronyms must be at most 5 characters long"],
     },
     description: {
       type: String,
       required: [true, "Please enter a description for the company"],
-    },
-    logo: {
-      type: String,
-      required: [true, "Please choose a logo"],
     },
     current_price: {
       type: Number,

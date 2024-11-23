@@ -68,7 +68,7 @@ const Images = ({ image1, image2, image3, image4 }) => {
   );
 };
 
-const StocksBought = ({ userStocks }) => {
+const StocksBought = ({ userStocks, setNumberOfAssets }) => {
   const { user } = useAuth();
   const [totalValue, setTotalValue] = useState(0);
   const [totalReturn, setTotalReturn] = useState(0);
@@ -144,11 +144,12 @@ const StocksBought = ({ userStocks }) => {
           return: data.return,
           totalSpent: data.value,
           quantity: data.quantity,
-          percentage: ((data.value / totalSpent) * 100).toFixed(2),
+          percentage: ((data.value / totalStockValue) * 100).toFixed(2),
           color: getRandomColor(),
         }))
         .sort((a, b) => b.percentage - a.percentage);
 
+      setNumberOfAssets(companyDetails.length);
       setCompanySpendDetails(companyDetails);
     } catch (error) {
       console.log(error.message);
@@ -170,16 +171,18 @@ const StocksBought = ({ userStocks }) => {
     <Stack spacing={2} className="bg-white w-[350px] h-[770px] rounded-xl p-4">
       <h3 className="text-3xl text-[#6E7191] font-semibold">Stocks Bought</h3>
       <div className={`relative w-[60%]`}>
-        <Price
-          price={totalValue.toLocaleString()}
-          styles="absolute -right-5 -top-1 w-5"
-          textStyles="text-3xl"
-        />
-        <div className="absolute top-0 right-0">
-          <Return
-            type={`${totalReturn >= 0 ? "positive" : "negative"}`}
-            number={totalReturn ? totalReturn.toFixed(1) : 0}
+        <div className="flex flex-row gap-7 items-start">
+          <Price
+            price={totalValue.toLocaleString()}
+            styles="absolute -right-6 -top-1 w-5"
+            textStyles="text-3xl"
           />
+          <div className="-translate-y-1">
+            <Return
+              type={`${totalReturn >= 0 ? "positive" : "negative"}`}
+              number={totalReturn ? totalReturn.toFixed(1) : 0}
+            />
+          </div>
         </div>
       </div>
       {companySpendDetails.length > 0 ? (

@@ -22,6 +22,10 @@ const UserRoutes = (userController) => {
     userController.getUserLeaderboards(req, res)
   );
 
+  router.get("/getall-avatars/:type", (req, res) =>
+    userController.getAllAvatars(req, res)
+  );
+
   return router;
 };
 

@@ -5,7 +5,7 @@ import Return from "./Return";
 import { useAuth } from "../providers/AuthProvider";
 import { userProfitService } from "../services/userProfit.service";
 
-const ProfitMade = ({ setSuccessRate, setNumberOfAssets }) => {
+const ProfitMade = ({ setSuccessRate }) => {
   const { user } = useAuth();
 
   const [userProfit, setUserProfit] = useState([]);
@@ -43,7 +43,6 @@ const ProfitMade = ({ setSuccessRate, setNumberOfAssets }) => {
       const successRate =
         (positiveProfitCount / sortedUserProfits.length) * 100;
 
-      setNumberOfAssets(sortedUserProfits.length);
       setSuccessRate(successRate);
       setTotalProfit(totalProfitCount);
     } catch (error) {
@@ -68,12 +67,14 @@ const ProfitMade = ({ setSuccessRate, setNumberOfAssets }) => {
         Profit Made
       </h3>
       <div className="text-3xl relative w-[43%]">
-        <Price price={totalProfit} styles={"absolute w-5 -right-6 -top-1"} />
-        <div className="absolute right-0 -top-2">
-          <Return
-            type={`${profitReturn >= 0 ? "positive" : "negative"}`}
-            number={profitReturn ? profitReturn.toFixed(1) : 0}
-          />
+        <div className="flex flex-row gap-8">
+          <Price price={totalProfit} styles={"absolute w-5 -right-6 -top-1"} />
+          <div className="-translate-y-3">
+            <Return
+              type={`${profitReturn >= 0 ? "positive" : "negative"}`}
+              number={profitReturn ? profitReturn.toFixed(1) : 0}
+            />
+          </div>
         </div>
       </div>
 
@@ -94,15 +95,19 @@ const ProfitMade = ({ setSuccessRate, setNumberOfAssets }) => {
             <div
               key={index}
               className={`
-              rounded-full bg-[#D5F3F0] inline-flex flex-row h-[50px] items-center mb-3 gap-1`}
+              rounded-full bg-[#D5F3F0] inline-flex flex-row h-[50px] items-center mb-3 gap-1 justify-between`}
               style={{
-                width: `${mappedWidth}%`,
+                width: `${
+                  mappedWidth > 70 && mappedWidth < 95
+                    ? Math.ceil(mappedWidth + 5)
+                    : Math.ceil(mappedWidth)
+                }%`,
               }}
             >
               <div
                 className={`${bgColor} rounded-full h-[50px] pl-5 pt-1 pb-1 inline-flex flex-row items-center gap-2`}
                 style={{
-                  width: `${mappedWidth}%`,
+                  width: `${Math.ceil(mappedWidth)}%`,
                 }}
               >
                 <div className="bg-white rounded-full h-[40px] w-[40px] flex items-center justify-center p-1">

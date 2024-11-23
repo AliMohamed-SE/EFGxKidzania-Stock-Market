@@ -1,50 +1,122 @@
+import fs from "fs/promises";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const maleAvatarsPath = path.resolve(__dirname, "../../images/avatars/male");
+const femaleAvatarsPath = path.resolve(
+  __dirname,
+  "../../images/avatars/female"
+);
 class UserService {
-  constructor({ userRepo, userProfitRepo }) {
+  constructor({ userRepo, userProfitRepo, transactionRepo, logger }) {
     this.userRepo = userRepo;
     this.userProfitRepo = userProfitRepo;
+    this.transactionRepo = transactionRepo;
+    this.logger = logger;
   }
 
-  register = async (req) => {
+  register = async (req, correlationId) => {
     const { username } = req.body;
 
-    // Check if the username is unique
-    const existingUser = await this.userRepo.getUserByUsername(username);
-    if (existingUser) {
-      throw new Error("this username is invalid");
-    }
+    try {
+      const existingUser = await this.userRepo.getUserByUsername(
+        username,
+        correlationId
+      );
+      if (existingUser) {
+        throw new Error("this username is invalid");
+      }
 
-    return await this.userRepo.addUser(req.body);
+      const newUser = await this.userRepo.addUser(req.body, correlationId);
+
+      return newUser;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  login = async (req) => {
+  login = async (req, correlationId) => {
     const { username, password } = req.body;
-    const user = await this.userRepo.getUser(username, password);
 
-    if (user) {
-      return user;
+    try {
+      const user = await this.userRepo.getUser(
+        username,
+        password,
+        correlationId
+      );
+
+      if (user) {
+        return user;
+      }
+
+      throw new Error("Invalid Credentials");
+    } catch (error) {
+      throw error;
     }
-
-    throw new Error("Invalid Credentials");
   };
 
-  getUserByUsername = async (username) => {
-    const user = await this.userRepo.getUserByUsername(username);
+  getUserByUsername = async (username, correlationId) => {
+    try {
+      const user = await this.userRepo.getUserByUsername(
+        username,
+        correlationId
+      );
 
-    return user;
+      if (user) {
+        return user;
+      }
+
+      return null;
+    } catch (error) {
+      throw error;
+    }
   };
 
-  getUserLeaderboards = async () => {
-    const highestNumberOfTrades =
-      await this.userRepo.getHighestNumberOfTrades();
-    const highestReturn = await this.userProfitRepo.getHighestReturn();
-    const biggestInvestment = await this.userRepo.getBiggestInvestment();
+  getUserLeaderboards = async (correlationId) => {
+    try {
+      const highestNumberOfTrades =
+        await this.userRepo.getHighestNumberOfTrades(correlationId);
+      const highestReturn = await this.userProfitRepo.getHighestReturn(
+        correlationId
+      );
+      const biggestInvestment = await this.userRepo.getBiggestInvestment(
+        correlationId
+      );
 
-    const leaderboards = {
-      highestNumberOfTrades: highestNumberOfTrades,
-      highestReturn: highestReturn,
-      biggestInvestment: biggestInvestment,
-    };
-    return leaderboards;
+      const leaderboards = {
+        highestNumberOfTrades,
+        highestReturn,
+        biggestInvestment,
+      };
+
+      return leaderboards;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  getAllAvatars = async (type, correlationId) => {
+    try {
+      let avatars;
+
+      this.logger.info("Attempting to fetch avatars from respective folder", {
+        correlationId,
+        type,
+      });
+
+      if (type === "male") {
+        avatars = await fs.readdir(maleAvatarsPath);
+      } else {
+        avatars = await fs.readdir(femaleAvatarsPath);
+      }
+
+      return avatars.map((file) => `/images/avatars/${type}/${file}`);
+    } catch (error) {
+      throw new Error("Failed to fetch avatars.");
+    }
   };
 }
 

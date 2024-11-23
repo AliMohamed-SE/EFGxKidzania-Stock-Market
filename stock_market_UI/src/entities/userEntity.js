@@ -8,6 +8,7 @@ class UserEntity {
     avatar,
     wallet_balance,
     stock_balance,
+    previous_balance,
     total_profit,
     number_of_assets,
     total_invested_amount,
@@ -23,12 +24,16 @@ class UserEntity {
     this.wallet_balance = wallet_balance;
     this.stock_balance = stock_balance;
     this.total_profit = total_profit;
+    this.previous_balance = previous_balance;
     this.number_of_assets = number_of_assets;
     this.total_invested_amount = total_invested_amount;
     this.number_of_trades = number_of_trades;
     this.createdAt = createdAt;
   }
 
+  getTotalBalance() {
+    return this.wallet_balance + this.stock_balance;
+  }
   getFullName() {
     return `${this.first_name} ${this.last_name}`;
   }
@@ -41,6 +46,11 @@ class UserEntity {
     });
 
     return formattedDate;
+  }
+
+  updateBalance(newBalance) {
+    this.wallet_balance = newBalance;
+    return newBalance;
   }
 }
 

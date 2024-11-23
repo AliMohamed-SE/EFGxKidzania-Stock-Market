@@ -1,26 +1,54 @@
-import fs from "fs";
-import path from "path";
+import winston from "winston";
+import DailyRotateFile from "winston-daily-rotate-file";
 import { fileURLToPath } from "url";
+import path from "path";
 
-// Use `fileURLToPath` to convert `import.meta.url` to a file path
+// Define log directory
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Define the logs directory and ensure it exists
-const logsDir = path.join(__dirname, "../Logs");
-if (!fs.existsSync(logsDir)) {
-  fs.mkdirSync(logsDir);
+let logDirectory;
+// If in production, the application will be in docker so use an absolute path
+if (process.env.NODE_ENV === "development") {
+  logDirectory = "/app/logs";
+} else {
+  logDirectory = path.join(__dirname, "../../logs");
 }
 
-// Arrow function to log messages with a timestamp
-const logToFile = (transactionType, message) => {
-  const timestamp = new Date().toISOString();
-  const logMessage = `${timestamp} - ${message}\n`;
-  const filename = `${transactionType.toLowerCase()}_logs.txt`;
+// Create a daily rotate file transport
+const dailyRotateFileTransport = new DailyRotateFile({
+  dirname: logDirectory,
+  filename: "%DATE%.log",
+  datePattern: "YYYY-MM-DD",
+  maxFiles: "30d",
+  level: process.env.NODE_ENV === "production" ? "info" : "debug",
+});
 
-  fs.appendFile(path.join(logsDir, filename), logMessage, (err) => {
-    if (err) console.error("Failed to write to log file:", err);
-  });
-};
+// Create Winston logger
+const logger = winston.createLogger({
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(({ timestamp, level, message, ...meta }) => {
+      // Include additional metadata in the log
+      const metaString = Object.keys(meta).length
+        ? ` | ${JSON.stringify(meta)}`
+        : "";
+      return `${timestamp} [${level.toUpperCase()}]: ${message}${metaString}`;
+    })
+  ),
+  transports: [dailyRotateFileTransport],
+});
 
-export { logToFile };
+// If in development, also log to console
+if (process.env.NODE_ENV === "development") {
+  logger.add(
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.colorize(),
+        winston.format.simple()
+      ),
+    })
+  );
+}
+
+export default logger;

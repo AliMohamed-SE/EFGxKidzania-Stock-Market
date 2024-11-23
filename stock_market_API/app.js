@@ -1,4 +1,6 @@
 import express from "express";
+import path from "path";
+import { fileURLToPath } from "url";
 import { config } from "dotenv";
 import { connectToDB } from "./db/database.js";
 
@@ -16,10 +18,16 @@ import CompanyRoutes from "./src/Company/CompanyRoutes.js";
 import StocksHistoryRoutes from "./src/StocksHistory/StocksHistoryRoutes.js";
 import UserStocksRoutes from "./src/UserStocks/UserStocksRoutes.js";
 import UserProfitRoutes from "./src/UserProfit/UserProfitRoutes.js";
+import UserWithdrawRoutes from "./src/UserWithdraw/UserWithdrawRoutes.js";
+import AdminRoutes from "./src/Admin/AdminRoutes.js";
+import { startCronJobs } from "./src/jobs/userUpdateJobs.js";
 
 config();
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Middleware
 app.use(cors());
@@ -27,6 +35,7 @@ app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 // Define the routes
 const userController = container.resolve("userController");
@@ -34,12 +43,16 @@ const companyController = container.resolve("companyController");
 const stocksHistoryController = container.resolve("stocksHistoryController");
 const userStocksController = container.resolve("userStocksController");
 const userProfitController = container.resolve("userProfitController");
+const userWithdrawController = container.resolve("userWithdrawController");
+const adminController = container.resolve("adminController");
 
 app.use("/api/users", UserRoutes(userController));
 app.use("/api/companies", CompanyRoutes(companyController));
 app.use("/api/stocksHistory", StocksHistoryRoutes(stocksHistoryController));
 app.use("/api/userStocks", UserStocksRoutes(userStocksController));
 app.use("/api/userProfit", UserProfitRoutes(userProfitController));
+app.use("/api/userWithdraw", UserWithdrawRoutes(userWithdrawController));
+app.use("/api/admin", AdminRoutes(adminController));
 
 // Error Handler
 app.use((err, req, res, next) => {
@@ -61,6 +74,9 @@ const startServer = async () => {
     await connectToDB();
 
     // await seedDatabase();
+
+    // Start Cron Jobs
+    startCronJobs();
 
     // Start Server
     app.listen(PORT, (err) => {

@@ -1,5 +1,3 @@
-import { logToFile } from "../util/logger.js";
-
 class UserStocksService {
   constructor({
     userStocksRepo,
@@ -7,15 +5,16 @@ class UserStocksService {
     transactionRepo,
     companyRepo,
     userProfitRepo,
+    logger,
   }) {
     this.userStocksRepo = userStocksRepo;
     this.userRepo = userRepo;
     this.transactionRepo = transactionRepo;
     this.companyRepo = companyRepo;
     this.userProfitRepo = userProfitRepo;
+    this.logger = logger;
   }
-
-  buyStock = async (data) => {
+  buyStock = async (data, correlationId) => {
     const { userId, companyId, quantity, buy_price } = data;
 
     let transactionId;
@@ -25,10 +24,16 @@ class UserStocksService {
 
     try {
       // Validate the user and company
-      const existingUser = await this.userRepo.getUserById(userId);
+      const existingUser = await this.userRepo.getUserById(
+        userId,
+        correlationId
+      );
       if (!existingUser) throw new Error("this user doesn't exist");
 
-      const existingCompany = await this.companyRepo.getCompany(companyId);
+      const existingCompany = await this.companyRepo.getCompany(
+        companyId,
+        correlationId
+      );
       if (!existingCompany) throw new Error("this company doesn't exist");
 
       const totalBuyPrice = quantity * buy_price;
@@ -38,14 +43,9 @@ class UserStocksService {
         );
       }
 
-      // Log the beginning of the transaction
-      logToFile(
-        "Buy",
-        `------------------------------------------------------------------------`
-      );
-      logToFile(
-        "Buy",
-        `Initiating buyStock for userId: ${userId}, companyId: ${companyId}, total price: ${totalBuyPrice}`
+      // Log transaction initialization
+      this.logger.info(
+        `Starting buyStock: userId=${userId}, companyId=${companyId}, totalPrice=${totalBuyPrice}, correlationId=${correlationId}`
       );
 
       // Create a new Buy transaction
@@ -59,22 +59,27 @@ class UserStocksService {
         type: "Buy",
         price: buy_price,
       };
-
       const transaction = await this.transactionRepo.addTransaction(
-        buyTransaction
+        buyTransaction,
+        correlationId
       );
       transactionId = transaction._id;
-      logToFile(
-        "Buy",
-        `Transaction created: ${JSON.stringify(buyTransaction)}`
+
+      // Log transaction creation
+      this.logger.debug(
+        `Transaction created: transactionId=${transactionId}, correlationId=${correlationId}`
       );
 
       // Add to user stocks
-      const userStocks = await this.userStocksRepo.addUserStocks(data);
+      const userStocks = await this.userStocksRepo.addUserStocks(
+        data,
+        correlationId
+      );
       userStocksId = userStocks._id;
-      logToFile(
-        "Buy",
-        `Added user stocks for transaction ID: ${transactionId}`
+
+      // Log user stocks addition
+      this.logger.debug(
+        `User stocks added: userStocksId=${userStocksId}, transactionId=${transactionId}, correlationId=${correlationId}`
       );
 
       // Update user after transaction
@@ -82,93 +87,116 @@ class UserStocksService {
         "Buy",
         totalBuyPrice,
         userId,
-        0
+        0,
+        correlationId
       );
       userAdjusted = true;
-      logToFile("Buy", `User updated with new balance for user ID: ${userId}`);
+
+      // Log user update
+      this.logger.debug(
+        `User updated: userId=${userId}, walletAdjustedBy=${totalBuyPrice}, correlationId=${correlationId}`
+      );
 
       // Update company after transaction
-      await this.companyRepo.updateAfterTransaction("Buy", companyId);
-      companyAdjusted = true;
-      logToFile(
+      await this.companyRepo.updateAfterTransaction(
         "Buy",
-        `Company transaction count updated for company ID: ${companyId}`
+        companyId,
+        correlationId
+      );
+      companyAdjusted = true;
+
+      // Log company update
+      this.logger.debug(
+        `Company updated: companyId=${companyId}, correlationId=${correlationId}`
       );
 
       return updatedUser;
     } catch (error) {
-      logToFile("Buy", `Error in buyStock: ${error.message}`);
-
-      // Rollback user update if it was adjusted
       if (userAdjusted) {
         await this.userRepo.rollbackAfterTransaction(
           "Buy",
           totalBuyPrice,
-          userId
+          userId,
+          correlationId
         );
-        logToFile("Buy", `Rolled back user update for user ID: ${userId}`);
+        this.logger.debug(
+          `Rollback: User update reverted for userId=${userId}, correlationId=${correlationId}`
+        );
       }
 
-      // Rollback company update if it was adjusted
       if (companyAdjusted) {
-        await this.companyRepo.rollbackAfterTransaction("Buy", companyId);
-        logToFile(
+        await this.companyRepo.rollbackAfterTransaction(
           "Buy",
-          `Rolled back company update for company ID: ${companyId}`
+          companyId,
+          correlationId
+        );
+        this.logger.debug(
+          `Rollback: Company update reverted for companyId=${companyId}, correlationId=${correlationId}`
         );
       }
 
-      // Delete transaction if it was created
       if (transactionId) {
-        await this.transactionRepo.deleteTransaction(transactionId);
-        logToFile("Buy", `Deleted transaction ID: ${transactionId}`);
+        await this.transactionRepo.deleteTransaction(
+          transactionId,
+          correlationId
+        );
+        this.logger.debug(
+          `Rollback: Transaction deleted for transactionId=${transactionId}, correlationId=${correlationId}`
+        );
       }
 
-      // Rollback user stocks if they were added
       if (userStocksId) {
-        await this.userStocksRepo.rollbackUserStocks(userStocksId, quantity);
-        logToFile("Buy", `Rolled back user stocks ID: ${userStocksId}`);
+        await this.userStocksRepo.rollbackUserStocks(
+          userStocksId,
+          quantity,
+          correlationId
+        );
+        this.logger.debug(
+          `Rollback: User stocks reverted for userStocksId=${userStocksId}, correlationId=${correlationId}`
+        );
       }
 
       throw new Error("Error buying the stock, transaction rolled back");
     }
   };
 
-  sellStock = async (data) => {
+  sellStock = async (data, correlationId) => {
     const { userId, companyId, quantity } = data;
 
-    try {
-      logToFile(
-        "Sell",
-        `------------------------------------------------------------------------`
-      );
-      logToFile(
-        "Sell",
-        `Initiating sellStock process for user ID: ${userId}, company ID: ${companyId}, quantity: ${quantity}`
-      );
+    let deletedUserStocks = [];
+    let adjustedUserStock;
+    let totalShares = 0;
+    let buy_price = 0;
 
-      // Check if the user exists
-      const existingUser = await this.userRepo.getUserById(userId);
+    this.logger.info(
+      `Processing sellStock: userId=${userId}, companyId=${companyId}, quantity=${quantity}`,
+      { correlationId }
+    );
+
+    try {
+      // Validate user and company existence
+      const existingUser = await this.userRepo.getUserById(
+        userId,
+        correlationId
+      );
       if (!existingUser) throw new Error("User does not exist");
 
-      // Check if the company exists
-      const existingCompany = await this.companyRepo.getCompany(companyId);
+      const existingCompany = await this.companyRepo.getCompany(
+        companyId,
+        correlationId
+      );
       if (!existingCompany) throw new Error("Company does not exist");
 
-      // Retrieve user's stocks in the specified company
+      // Retrieve user's stocks for the specified company
       const existingUserStocks = await this.userStocksRepo.getOneUserStocks(
         userId,
-        companyId
+        companyId,
+        correlationId
       );
       if (!existingUserStocks || existingUserStocks.length === 0)
         throw new Error("User has no shares in this company");
 
-      let totalShares = 0;
-      let buy_price = 0;
-      const deletedUserStocks = [];
-      let adjustedUserStock;
-
-      // Calculate total shares, buy price, and determine stocks to delete or adjust
+      // Determine stocks to delete or adjust
       for (const stock of existingUserStocks) {
         if (totalShares + stock.quantity <= quantity) {
           totalShares += stock.quantity;
@@ -186,15 +214,13 @@ class UserStocksService {
         }
       }
 
-      // Ensure the user has enough shares to sell
       if (totalShares < quantity)
         throw new Error("User does not have enough shares to sell");
 
-      // Calculate sell price and profit
       const sell_price = quantity * existingCompany.current_price;
       const profit = sell_price - buy_price;
 
-      // Create a Sell transaction
+      // Record sell transaction
       const sellTransaction = {
         userId,
         companyId,
@@ -207,153 +233,234 @@ class UserStocksService {
         profit,
       };
 
-      await this.transactionRepo.addTransaction(sellTransaction);
-      logToFile(
-        "Sell",
-        `Sell transaction recorded: ${JSON.stringify(sellTransaction)}`
+      await this.transactionRepo.addTransaction(sellTransaction, correlationId);
+      this.logger.debug(
+        `Sell transaction recorded: userId=${userId}, companyId=${companyId}, quantity=${quantity}, sellPrice=${sell_price}, profit=${profit}`,
+        { correlationId }
       );
 
-      // Delete or adjust user stocks as necessary
+      // Handle stocks: delete or adjust
       if (deletedUserStocks.length > 0) {
-        await this.userStocksRepo.deleteUserStocks(deletedUserStocks);
-        logToFile(
-          "Sell",
-          `Deleted user stocks for IDs: ${JSON.stringify(deletedUserStocks)}`
+        await this.userStocksRepo.deleteUserStocks(
+          deletedUserStocks,
+          correlationId
+        );
+        this.logger.debug(
+          `Deleted user stocks: ${JSON.stringify(deletedUserStocks)}`,
+          { correlationId }
         );
       }
 
       if (adjustedUserStock) {
         await this.userStocksRepo.updateUserStocks(
           adjustedUserStock._id,
-          adjustedUserStock.quantity
+          adjustedUserStock.quantity,
+          correlationId
         );
-        logToFile(
-          "Sell",
-          `Adjusted user stock ID: ${adjustedUserStock._id}, new quantity: ${adjustedUserStock.quantity}`
+        this.logger.debug(
+          `Adjusted user stock: stockId=${adjustedUserStock._id}, newQuantity=${adjustedUserStock.quantity}`,
+          { correlationId }
         );
       }
 
-      // Record profit for the user
+      // Record profit
       await this.userProfitRepo.addUserProfit({
         userId,
         companyId,
         profit,
         investedAmount: buy_price,
+        correlationId,
       });
-      logToFile(
-        "Sell",
-        `User profit recorded: { userId: ${userId}, companyId: ${companyId}, profit: ${profit}, investedAmount: ${buy_price} }`
+      this.logger.debug(
+        `User profit recorded: userId=${userId}, companyId=${companyId}, profit=${profit}, investedAmount=${buy_price}`,
+        { correlationId }
       );
 
-      // Update user wallet balance after transaction
+      // Update user wallet balance
       await this.userRepo.updateAfterTransaction(
         "Sell",
         sell_price,
         userId,
-        profit
+        profit,
+        correlationId
       );
-      logToFile("Sell", `User wallet balance updated for user ID: ${userId}`);
+      this.logger.debug(`Updated user wallet balance: userId=${userId}`, {
+        correlationId,
+      });
 
       // Update company transaction count
-      await this.companyRepo.updateAfterTransaction("Sell", companyId);
-      logToFile(
+      await this.companyRepo.updateAfterTransaction(
         "Sell",
-        `Company transaction count updated for company ID: ${companyId}`
+        companyId,
+        correlationId
+      );
+      this.logger.debug(
+        `Updated company transaction count: companyId=${companyId}`,
+        { correlationId }
       );
 
-      const updatedUser = await this.userRepo.getUserById(userId);
-      logToFile(
-        "Sell",
-        `Sell process completed successfully for user ID: ${userId}`
+      const updatedUser = await this.userRepo.getUserById(
+        userId,
+        correlationId
       );
-
+      this.logger.info(`Completed sellStock process for userId=${userId}`, {
+        correlationId,
+      });
       return updatedUser;
     } catch (error) {
-      logToFile("Sell", `Error in sellStock: ${error.message}`);
+      this.logger.error(
+        `Error in sellStock: userId=${userId}, companyId=${companyId}, error=${error.message}`,
+        { correlationId }
+      );
       throw new Error("Failed to process sell transaction");
     }
   };
 
-  addUserStocks = async (data) => {
+  addUserStocks = async (data, correlationId) => {
     const { userId, companyId } = data;
 
-    const existingUserStocks = await this.userStocksRepo.getOneUserStocks(
-      userId,
-      companyId
-    );
-
-    let userStocks;
-
-    if (existingUserStocks) {
-      userStocks = await this.userStocksRepo.updateUserStocks(
+    try {
+      const existingUserStocks = await this.userStocksRepo.getOneUserStocks(
         userId,
         companyId,
-        data
+        correlationId
       );
-    } else {
-      userStocks = await this.userStocksRepo.addUserStocks(data);
-    }
 
-    return userStocks;
+      let userStocks;
+
+      if (existingUserStocks) {
+        this.logger.debug(
+          `Existing stocks found for userId=${userId}, companyId=${companyId}. Updating stocks.`
+        );
+        userStocks = await this.userStocksRepo.updateUserStocks(
+          userId,
+          companyId,
+          data,
+          correlationId
+        );
+        this.logger.info(
+          `User stocks updated: userId=${userId}, companyId=${companyId}`
+        );
+      } else {
+        this.logger.debug(
+          `No existing stocks found for userId=${userId}, companyId=${companyId}. Adding new stocks.`
+        );
+        userStocks = await this.userStocksRepo.addUserStocks(
+          data,
+          correlationId
+        );
+        this.logger.info(
+          `User stocks added: userId=${userId}, companyId=${companyId}`
+        );
+      }
+
+      return userStocks;
+    } catch (error) {
+      throw new Error("Failed to add or update user stocks");
+    }
   };
 
-  addUserStocks = async (data) => {
+  addUserStocks = async (data, correlationId) => {
     const { userId, companyId } = data;
-
-    const existingUserStocks = await this.userStocksRepo.getOneUserStocks(
-      userId,
-      companyId
-    );
-
-    let userStocks;
-
-    if (existingUserStocks) {
-      userStocks = await this.userStocksRepo.updateUserStocks(
+    try {
+      const existingUserStocks = await this.userStocksRepo.getOneUserStocks(
         userId,
         companyId,
-        data
+        correlationId
       );
-    } else {
-      userStocks = await this.userStocksRepo.addUserStocks(data);
-    }
 
-    return userStocks;
+      let userStocks;
+
+      if (existingUserStocks) {
+        this.logger.debug(
+          `Existing user stocks found for userId=${userId}, companyId=${companyId}. Updating stocks.`,
+          { correlationId }
+        );
+        userStocks = await this.userStocksRepo.updateUserStocks(
+          userId,
+          companyId,
+          data,
+          correlationId
+        );
+        this.logger.info(
+          `User stocks successfully updated for userId=${userId}, companyId=${companyId}`,
+          { correlationId }
+        );
+      } else {
+        this.logger.debug(
+          `No existing stocks found for userId=${userId}, companyId=${companyId}. Adding new stocks.`,
+          { correlationId }
+        );
+        userStocks = await this.userStocksRepo.addUserStocks(
+          data,
+          correlationId
+        );
+        this.logger.info(
+          `New user stocks successfully added for userId=${userId}, companyId=${companyId}`,
+          { correlationId }
+        );
+      }
+
+      return userStocks;
+    } catch (error) {
+      throw new Error("Failed to add or update user stocks");
+    }
   };
 
-  updateUserStocks = async (data) => {
+  updateUserStocks = async (data, correlationId) => {
     const { userId, companyId } = data;
 
-    const existingUserStocks = await this.userStocksRepo.getOneUserStocks(
-      userId,
-      companyId
-    );
+    try {
+      const existingUserStocks = await this.userStocksRepo.getOneUserStocks(
+        userId,
+        companyId,
+        correlationId
+      );
 
-    if (!existingUserStocks) {
-      throw new Error("This user has no stocks in the company");
+      if (!existingUserStocks) {
+        throw new Error("This user has no stocks in the company");
+      }
+
+      const userStocks = await this.userStocksRepo.updateUserStocks(
+        userId,
+        companyId,
+        data,
+        correlationId
+      );
+
+      return userStocks;
+    } catch (error) {
+      throw new Error("Failed to update user stocks");
     }
-
-    const userStocks = await this.userStocksRepo.updateUserStocks(
-      userId,
-      companyId,
-      data
-    );
-
-    return userStocks;
   };
 
-  getAllUserStocks = async (userId) => {
-    const userStocks = await this.userStocksRepo.getAllUserStocks(userId);
+  getAllUserStocks = async (userId, correlationId) => {
+    try {
+      const userStocks = await this.userStocksRepo.getAllUserStocks(
+        userId,
+        correlationId
+      );
 
-    return userStocks;
+      return userStocks;
+    } catch (error) {
+      throw new Error("Failed to retrieve all user stocks");
+    }
   };
 
-  getOneUserStocks = async (userId, companyId) => {
-    const userStocks = await this.userStocksRepo.getOneUserStocks(
-      userId,
-      companyId
-    );
+  getOneUserStocks = async (userId, companyId, correlationId) => {
+    try {
+      const userStocks = await this.userStocksRepo.getOneUserStocks(
+        userId,
+        companyId,
+        correlationId
+      );
 
-    return userStocks;
+      return userStocks;
+    } catch (error) {
+      throw new Error(
+        "Failed to retrieve user stocks for the specified company"
+      );
+    }
   };
 }
 

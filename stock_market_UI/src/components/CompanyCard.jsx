@@ -4,6 +4,7 @@ import Grid from "@mui/material/Grid2";
 import Price from "../components/Price";
 
 const CompanyCard = memo(({ company, handleOpen }) => {
+  console.log(company.current_return);
   return (
     <Grid key={company._id} size={6} className="bg-white rounded-xl p-3">
       <Stack spacing={1}>
@@ -40,7 +41,7 @@ const CompanyCard = memo(({ company, handleOpen }) => {
             Change
           </div>
           <Price
-            price={`${company.current_change < 0 ? "-" : "+"}${
+            price={`${company.current_change < 0 ? "" : "+"}${
               company.current_change
             }`}
             styles="absolute -right-3 top-0 w-3"

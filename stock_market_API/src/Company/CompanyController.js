@@ -1,39 +1,75 @@
+import { v4 as uuidv4 } from "uuid";
+
 class CompanyController {
-  constructor({ companyService }) {
+  constructor({ companyService, logger }) {
     this.companyService = companyService;
+    this.logger = logger;
   }
 
   getCompany = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
     try {
       const { companyId } = req.params;
 
-      // Check if Id is provided
+      this.logger.info("getCompany - Request received", {
+        correlationId,
+        companyId,
+      });
+
       if (!companyId) {
+        this.logger.error("getCompany - Missing companyId parameter", {
+          correlationId,
+        });
         return res
           .status(400)
           .json({ error: "CompanyId parameter is required" });
       }
 
-      const company = await this.companyService.getCompany(companyId);
+      const company = await this.companyService.getCompany(
+        companyId,
+        correlationId
+      );
 
-      // If company not found, return 404 status
       if (!company) {
+        this.logger.error("getCompany - Company not found", {
+          correlationId,
+          companyId,
+        });
         return res.status(404).json({ error: "Company not found" });
       }
 
-      // User found, return 200 status with user data
+      this.logger.info("getCompany - Successfully retrieved company", {
+        correlationId,
+        companyId,
+      });
       res.status(200).json(company);
     } catch (error) {
+      this.logger.error("getCompany - Unexpected error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
       res.status(500).json({ error: "An unexpected error occurred" });
     }
   };
 
   getCompanyMetrics = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
     try {
-      const mostTraded = await this.companyService.getMostTraded();
-      const mostInvested = await this.companyService.getMostInvested();
-      const highestReturn = await this.companyService.getHighestReturn();
-      const mostVisited = await this.companyService.getMostVisited();
+      this.logger.info("getCompanyMetrics - Request received", {
+        correlationId,
+      });
+
+      const mostTraded = await this.companyService.getMostTraded(correlationId);
+      const mostInvested = await this.companyService.getMostInvested(
+        correlationId
+      );
+      const highestReturn = await this.companyService.getHighestReturn(
+        correlationId
+      );
+      const mostVisited = await this.companyService.getMostVisited(
+        correlationId
+      );
 
       const metrics = {
         trending_now: mostTraded,
@@ -42,8 +78,16 @@ class CompanyController {
         most_visited: mostVisited,
       };
 
+      this.logger.info("getCompanyMetrics - Successfully retrieved metrics", {
+        correlationId,
+      });
       return res.status(200).json(metrics);
     } catch (error) {
+      this.logger.error("getCompanyMetrics - Server error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
       return res
         .status(500)
         .json({ message: "Server error", error: error.message });
@@ -51,11 +95,23 @@ class CompanyController {
   };
 
   getMostTraded = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
     try {
-      const companies = await this.companyService.getMostTraded();
+      this.logger.info("getMostTraded - Request received", { correlationId });
 
+      const companies = await this.companyService.getMostTraded(correlationId);
+
+      this.logger.info(
+        "getMostTraded - Successfully retrieved most traded companies",
+        { correlationId }
+      );
       return res.status(200).json(companies);
     } catch (error) {
+      this.logger.error("getMostTraded - Server error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
       return res
         .status(500)
         .json({ message: "Server error", error: error.message });
@@ -63,11 +119,25 @@ class CompanyController {
   };
 
   getMostInvested = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
     try {
-      const companies = await this.companyService.getMostInvested();
+      this.logger.info("getMostInvested - Request received", { correlationId });
 
+      const companies = await this.companyService.getMostInvested(
+        correlationId
+      );
+
+      this.logger.info(
+        "getMostInvested - Successfully retrieved most invested companies",
+        { correlationId }
+      );
       return res.status(200).json(companies);
     } catch (error) {
+      this.logger.error("getMostInvested - Server error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
       return res
         .status(500)
         .json({ message: "Server error", error: error.message });
@@ -75,11 +145,27 @@ class CompanyController {
   };
 
   getHighestReturn = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
     try {
-      const companies = await this.companyService.getHighestReturn();
+      this.logger.info("getHighestReturn - Request received", {
+        correlationId,
+      });
 
+      const companies = await this.companyService.getHighestReturn(
+        correlationId
+      );
+
+      this.logger.info(
+        "getHighestReturn - Successfully retrieved highest return companies",
+        { correlationId }
+      );
       return res.status(200).json(companies);
     } catch (error) {
+      this.logger.error("getHighestReturn - Server error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
       return res
         .status(500)
         .json({ message: "Server error", error: error.message });
@@ -87,11 +173,23 @@ class CompanyController {
   };
 
   getMostVisited = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
     try {
-      const companies = await this.companyService.getMostVisited();
+      this.logger.info("getMostVisited - Request received", { correlationId });
 
+      const companies = await this.companyService.getMostVisited(correlationId);
+
+      this.logger.info(
+        "getMostVisited - Successfully retrieved most visited companies",
+        { correlationId }
+      );
       return res.status(200).json(companies);
     } catch (error) {
+      this.logger.error("getMostVisited - Server error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
       return res
         .status(500)
         .json({ message: "Server error", error: error.message });
@@ -99,13 +197,31 @@ class CompanyController {
   };
 
   getCompanies = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
     try {
       const { balance } = req.params;
 
-      const companies = await this.companyService.getCompanies(balance);
+      this.logger.info("getCompanies - Request received", {
+        correlationId,
+        balance,
+      });
 
+      const companies = await this.companyService.getCompanies(
+        balance,
+        correlationId
+      );
+
+      this.logger.info("getCompanies - Successfully retrieved companies", {
+        correlationId,
+        balance,
+      });
       return res.status(200).json(companies);
     } catch (error) {
+      this.logger.error("getCompanies - Server error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
       return res
         .status(500)
         .json({ message: "Server error", error: error.message });
@@ -113,23 +229,113 @@ class CompanyController {
   };
 
   createCompany = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
     try {
-      // Extract company data from the request body
       const { name, description, logo } = req.body;
 
-      // Validate the data (this can be more extensive based on your requirements)
+      this.logger.info("createCompany - Request received", {
+        correlationId,
+        name,
+        description,
+      });
+
       if (!name || !description || !logo) {
+        this.logger.warn("createCompany - Missing required fields", {
+          correlationId,
+          name,
+          description,
+          logo,
+        });
         return res
           .status(400)
           .json({ message: "Name, Description and Logo fields are required." });
       }
 
-      // Create a new company instance
-      const newCompany = this.companyService.createCompany(req.body);
+      const newCompany = await this.companyService.createCompany(
+        req.body,
+        correlationId
+      );
 
-      // Respond with the newly created company
+      this.logger.info("createCompany - Successfully created new company", {
+        correlationId,
+        newCompany,
+      });
       return res.status(201).json(newCompany);
     } catch (error) {
+      this.logger.error("createCompany - Server error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
+      return res
+        .status(500)
+        .json({ message: "Server error", error: error.message });
+    }
+  };
+
+  updateCompany = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
+    try {
+      const { companyId } = req.body;
+
+      this.logger.info("updateCompany - Request received", {
+        correlationId,
+        companyId,
+      });
+
+      if (!companyId) {
+        this.logger.warn("updateCompany - Missing required fields", {
+          correlationId,
+          companyId,
+        });
+        return res.status(400).json({ message: "companyId is required." });
+      }
+
+      const updatedCompany = await this.companyService.updateCompany(
+        req.body,
+        correlationId
+      );
+
+      this.logger.info("updateCompany - Successfully updated company", {
+        correlationId,
+        updatedCompany,
+      });
+      return res.status(201).json(updatedCompany);
+    } catch (error) {
+      this.logger.error("updateCompany - Server error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
+      return res
+        .status(500)
+        .json({ message: "Server error", error: error.message });
+    }
+  };
+
+  updateCompanies = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
+    try {
+      const { filePath } = req.body;
+      this.logger.info("updateCompanies - Request received", {
+        correlationId,
+      });
+
+      await this.companyService.updateCompanies(filePath, correlationId);
+
+      this.logger.info("updateCompanies - Successfully updated companies", {
+        correlationId,
+        updatedCompany,
+      });
+      return res
+        .status(201)
+        .json({ message: "Successfully updated required companies" });
+    } catch (error) {
+      this.logger.error("updateCompanies - Server error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
       return res
         .status(500)
         .json({ message: "Server error", error: error.message });
