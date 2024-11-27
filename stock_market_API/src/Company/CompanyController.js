@@ -231,7 +231,7 @@ class CompanyController {
   createCompany = async (req, res) => {
     const correlationId = req.headers["x-correlation-id"] || uuidv4();
     try {
-      const { name, description, logo } = req.body;
+      const { name, description, acronym, establishment_type } = req.body;
 
       this.logger.info("createCompany - Request received", {
         correlationId,
@@ -239,7 +239,7 @@ class CompanyController {
         description,
       });
 
-      if (!name || !description || !logo) {
+      if (!name || !description || !acronym || !establishment_type) {
         this.logger.warn("createCompany - Missing required fields", {
           correlationId,
           name,
@@ -252,6 +252,7 @@ class CompanyController {
       }
 
       const newCompany = await this.companyService.createCompany(
+        req.file,
         req.body,
         correlationId
       );
@@ -263,6 +264,47 @@ class CompanyController {
       return res.status(201).json(newCompany);
     } catch (error) {
       this.logger.error("createCompany - Server error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
+      return res
+        .status(500)
+        .json({ message: "Server error", error: error.message });
+    }
+  };
+
+  deleteCompany = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
+    try {
+      const { companyId } = req.params;
+
+      this.logger.info("deleteCompany - Request received", {
+        correlationId,
+        companyId,
+      });
+
+      if (!companyId) {
+        this.logger.warn("deleteCompany - Missing required fields", {
+          correlationId,
+          companyId,
+        });
+        return res.status(400).json({
+          message: "companyId is required.",
+        });
+      }
+
+      const company = await this.companyService.deleteCompany(
+        companyId,
+        correlationId
+      );
+
+      this.logger.info("deleteCompany - Successfully deleted company", {
+        correlationId,
+      });
+      return res.status(201).json(company);
+    } catch (error) {
+      this.logger.error("deleteCompany - Server error", {
         correlationId,
         error: error.message,
         stack: error.stack,
@@ -292,6 +334,7 @@ class CompanyController {
       }
 
       const updatedCompany = await this.companyService.updateCompany(
+        req.file,
         req.body,
         correlationId
       );
@@ -313,25 +356,23 @@ class CompanyController {
     }
   };
 
-  updateCompanies = async (req, res) => {
+  updateVisitors = async (req, res) => {
     const correlationId = req.headers["x-correlation-id"] || uuidv4();
     try {
-      const { filePath } = req.body;
-      this.logger.info("updateCompanies - Request received", {
+      this.logger.info("updateVisitors - Request received", {
         correlationId,
       });
 
-      await this.companyService.updateCompanies(filePath, correlationId);
+      await this.companyService.updateVisitors(req.body, correlationId);
 
-      this.logger.info("updateCompanies - Successfully updated companies", {
+      this.logger.info("updateVisitors - Successfully updated companies", {
         correlationId,
-        updatedCompany,
       });
       return res
         .status(201)
         .json({ message: "Successfully updated required companies" });
     } catch (error) {
-      this.logger.error("updateCompanies - Server error", {
+      this.logger.error("updateVisitors - Server error", {
         correlationId,
         error: error.message,
         stack: error.stack,

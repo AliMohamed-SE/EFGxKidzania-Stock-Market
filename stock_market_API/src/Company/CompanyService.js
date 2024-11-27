@@ -1,6 +1,10 @@
+import fs from "fs";
+import path from "path";
 class CompanyService {
-  constructor({ companyRepo, logger }) {
+  constructor({ companyRepo, stocksHistoryRepo, userStocksRepo, logger }) {
     this.companyRepo = companyRepo;
+    this.stocksHistoryRepo = stocksHistoryRepo;
+    this.userStocksRepo = userStocksRepo;
     this.logger = logger;
   }
 
@@ -76,9 +80,18 @@ class CompanyService {
     }
   };
 
-  createCompany = async (data, correlationId) => {
+  createCompany = async (logoPath, data, correlationId) => {
     try {
-      const company = await this.companyRepo.addCompany(data, correlationId);
+      const addData = {
+        ...data,
+      };
+
+      if (logoPath) {
+        const logoFileName = path.basename(logoPath.path);
+        addData.logo = logoFileName;
+      }
+
+      const company = await this.companyRepo.addCompany(addData, correlationId);
 
       return company;
     } catch (error) {
@@ -86,99 +99,149 @@ class CompanyService {
     }
   };
 
-  updateCompany = async (data, correlationId) => {
+  deleteCompany = async (companyId, correlationId) => {
     try {
-      const company = await this.companyRepo.updateCompany(data, correlationId);
+      const existingCompany = await this.companyRepo.getCompany(companyId);
 
-      return company;
-    } catch (error) {
-      throw error;
-    }
-  };
+      if (existingCompany.logo) {
+        const oldLogoPath = path.resolve("images/logos", existingCompany.logo);
+        if (fs.existsSync(oldLogoPath)) {
+          fs.unlinkSync(oldLogoPath);
+          this.logger.debug(`Deleted previous logo: ${existingCompany.logo}`);
+        }
+      }
 
-  updateCompanies = async (filePath, correlationId) => {
-    try {
-      this.logger.info("Parsing the spreadsheet", { correlationId, filePath });
-      // Step 1: Parse the spreadsheet
-      const workbook = XLSX.readFile(filePath);
-      const sheet = workbook.Sheets[workbook.SheetNames[0]];
-      const data = XLSX.utils.sheet_to_json(sheet);
-      99;
-
-      this.logger.debug("Parsed the spreadsheet successfully", {
-        correlationId,
-        data,
-      });
-
-      // Step 2: Fetch all relevant companies
-      const acronyms = data.map((row) => row.acronym);
-      const companies = await Company.find({ acronym: { $in: acronyms } });
-      const companyMap = new Map(
-        companies.map((company) => [company.acronym, company])
+      await this.stocksHistoryRepo.deleteStocksHistory(
+        companyId,
+        correlationId
+      );
+      await this.userStocksRepo.deleteUserStocksByCompany(
+        companyId,
+        correlationId
+      );
+      const company = await this.companyRepo.deleteCompany(
+        companyId,
+        correlationId
       );
 
-      // Prepare bulk operations
-      const stockHistoryOperations = [];
-      const companyUpdateOperations = [];
-
-      // Step 3: Process each row in the spreadsheet
-      const currentDate = new Date();
-      for (const row of data) {
-        const { acronym, visitors } = row;
-        const company = companyMap.get(acronym);
-
-        if (!company) {
-          console.warn(`Company with acronym "${acronym}" not found.`);
-          continue;
-        }
-
-        // Calculate new price, change, and return
-        const previousPrice = company.current_price;
-        const newPrice = parseFloat((visitors / 100).toFixed(2));
-        const priceChange = parseFloat((newPrice - previousPrice).toFixed(2));
-        const priceReturn =
-          previousPrice !== 0
-            ? parseFloat(((priceChange / previousPrice) * 100).toFixed(2))
-            : 0;
-
-        // Save current record in stockhistory
-        stockHistoryOperations.push({
-          insertOne: {
-            document: {
-              companyId: company._id,
-              date: currentDate,
-              previousVisitors: company.current_visitors,
-              previousPrice,
-            },
-          },
-        });
-
-        // Update company fields
-        companyUpdateOperations.push({
-          updateOne: {
-            filter: { _id: company._id },
-            update: {
-              current_visitors: visitors,
-              current_price: newPrice,
-              current_change: priceChange,
-              current_return: priceReturn,
-            },
-          },
-        });
-      }
-
-      // Step 4: Bulk write to the database
-      if (stockHistoryOperations.length > 0) {
-        await StockHistory.bulkWrite(stockHistoryOperations);
-      }
-
-      if (companyUpdateOperations.length > 0) {
-        await Company.bulkWrite(companyUpdateOperations);
-      }
-
-      console.log("Spreadsheet processing completed successfully.");
+      return company;
     } catch (error) {
-      console.error("Error processing spreadsheet:", error.message);
+      throw error;
+    }
+  };
+
+  updateCompany = async (logoPath, data, correlationId) => {
+    try {
+      const updateData = {
+        ...data,
+      };
+
+      const existingCompany = await this.companyRepo.getCompany(data.companyId);
+
+      if (logoPath) {
+        const logoFileName = path.basename(logoPath.path);
+        updateData.logo = logoFileName;
+
+        if (existingCompany.logo) {
+          const oldLogoPath = path.resolve(
+            "images/logos",
+            existingCompany.logo
+          );
+          if (fs.existsSync(oldLogoPath)) {
+            fs.unlinkSync(oldLogoPath);
+            console.log(`Deleted previous logo: ${existingCompany.logo}`);
+          }
+        }
+      }
+
+      const company = await this.companyRepo.updateCompany(
+        updateData,
+        correlationId
+      );
+
+      return company;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  updateVisitors = async (visitors, correlationId) => {
+    try {
+      const bulkOperations = [];
+
+      this.logger.info("Preparing bulk operations for each establishment", {
+        correlationId,
+        numberOfEntries: Object.keys(visitors).length,
+      });
+
+      for (const [establishment, currentVisitors] of Object.entries(visitors)) {
+        this.logger.debug(
+          "Fetching the previous price for establishment and performing calculations",
+          { correlationId, establishment }
+        );
+
+        const existingCompany =
+          await this.companyRepo.getCompanyByEstablishmentType(establishment);
+
+        let prevPrice = 0,
+          prevReturn = 0,
+          prevBuys = 0,
+          prevSells = 0,
+          prevVisitors = 0;
+        if (existingCompany) {
+          prevPrice = existingCompany.current_price || 0;
+          prevReturn = existingCompany.current_return || 0;
+          prevBuys = existingCompany.number_of_buys || 0;
+          prevSells = existingCompany.number_of_sells || 0;
+          prevVisitors = existingCompany.current_visitors || 0;
+
+          // Insert a new record into the stockhistory collection
+          await this.stocksHistoryRepo.addStocksHistory(
+            {
+              companyId: existingCompany._id,
+              date: new Date(),
+              visitors: prevVisitors,
+              shares_price: prevPrice,
+              shares_return: prevReturn,
+              number_of_buys: prevBuys,
+              number_of_sells: prevSells,
+            },
+            correlationId
+          );
+
+          // Perform calculations for the current record
+          const currentPrice = currentVisitors / 100;
+          const currentChange = currentPrice - prevPrice;
+          const currentReturn = prevPrice
+            ? ((currentPrice - prevPrice) / prevPrice) * 100
+            : 0; // Avoid division by zero
+
+          // Prepare bulk operation for updating the company collection
+          bulkOperations.push({
+            updateOne: {
+              filter: { establishment_type: establishment }, // Match the establishment in the database
+              update: {
+                $set: {
+                  current_price: currentPrice,
+                  current_change: currentChange,
+                  current_visitors: currentVisitors,
+                  current_return: parseFloat(currentReturn.toFixed(2)), // Ensure numeric value with 2 decimals
+                  last_updated: new Date(), // Add a timestamp for updates
+                },
+              },
+              upsert: false, // Don't create the record if it doesn't exist
+            },
+          });
+
+          this.logger.debug("Prepared bulk operation for establishment", {
+            establishment,
+            update: bulkOperations[bulkOperations.length - 1],
+          });
+        }
+      }
+
+      await this.companyRepo.updateVisitors(bulkOperations, correlationId);
+    } catch (error) {
       throw error;
     }
   };

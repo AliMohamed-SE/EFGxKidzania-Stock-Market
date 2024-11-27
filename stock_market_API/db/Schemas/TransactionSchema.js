@@ -16,6 +16,7 @@ const transactionSchema = new mongoose.Schema(
       type: Date,
       required: true,
       default: Date.now,
+      index: true,
     },
     opening_balance: {
       type: Number,

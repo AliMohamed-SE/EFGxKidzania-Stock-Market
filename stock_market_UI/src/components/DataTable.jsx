@@ -9,10 +9,21 @@ import {
   Button,
   Box,
 } from "@mui/material";
+import { useLocation } from "react-router-dom";
+import { useAuth } from "../providers/AuthProvider";
 
 const DataTable = ({ data, thirdColumn, onViewStock }) => {
+  const location = useLocation();
+  const { backendUrl } = useAuth();
+
   // Define the header labels based on the third column prop
-  const headers = ["#", "Company", "Current Price", thirdColumn, "Action"];
+  const headers = [
+    "#",
+    "Company",
+    "Current Price",
+    thirdColumn,
+    ...(location.pathname !== "/admin/home" ? ["Action"] : []),
+  ];
 
   return (
     <TableContainer
@@ -71,7 +82,7 @@ const DataTable = ({ data, thirdColumn, onViewStock }) => {
                   }}
                 >
                   <img
-                    src={`images/logos/${company.acronym}.svg`}
+                    src={`${backendUrl}/images/logos/${company.acronym}.svg`}
                     className="w-10 h-10"
                     alt={`${company.name} logo`}
                   />
@@ -85,13 +96,16 @@ const DataTable = ({ data, thirdColumn, onViewStock }) => {
 
               <TableCell align="center" sx={{ border: "none" }}>
                 <div className="flex gap-1 justify-center items-center font-semibold">
-                  {company.current_price}
-                  <img
-                    src="images/KidZosicon.svg"
-                    alt="Kidzos Icon"
-                    width={13}
-                    height={13}
-                  />
+                  <div className="relative">
+                    {company.current_price}
+                    <img
+                      src="/images/KidZosicon.svg"
+                      alt="Kidzos Icon"
+                      width={13}
+                      height={13}
+                      className="absolute -right-4 -top-0.5"
+                    />
+                  </div>
                 </div>
               </TableCell>
               <TableCell align="center" sx={{ border: "none" }}>
@@ -108,7 +122,7 @@ const DataTable = ({ data, thirdColumn, onViewStock }) => {
                   >
                     {company.current_return}%
                     <img
-                      src={`images/${
+                      src={`/images/${
                         company.current_return > 0
                           ? "return_positive"
                           : "return_negative"
@@ -119,17 +133,19 @@ const DataTable = ({ data, thirdColumn, onViewStock }) => {
                 )}
                 {thirdColumn === "Visitors" && company.current_visitors}
               </TableCell>
-              <TableCell align="center" sx={{ border: "none" }}>
-                <Button
-                  variant="contained"
-                  color="success"
-                  startIcon={<img src="/images/white_profile.svg" />}
-                  onClick={() => onViewStock(company)}
-                  style={{ borderRadius: "20px", backgroundColor: "#31CFCB" }}
-                >
-                  View Stock
-                </Button>
-              </TableCell>
+              {location.pathname !== "/admin/home" && (
+                <TableCell align="center" sx={{ border: "none" }}>
+                  <Button
+                    variant="contained"
+                    color="success"
+                    startIcon={<img src="/images/white_profile.svg" />}
+                    onClick={() => onViewStock(company)}
+                    style={{ borderRadius: "20px", backgroundColor: "#31CFCB" }}
+                  >
+                    View Stock
+                  </Button>
+                </TableCell>
+              )}
             </TableRow>
           ))}
         </TableBody>

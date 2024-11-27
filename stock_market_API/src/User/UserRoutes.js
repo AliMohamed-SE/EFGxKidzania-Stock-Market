@@ -18,7 +18,7 @@ const UserRoutes = (userController) => {
     userController.getUserByUsername(req, res)
   );
 
-  router.get("/get-leaderboards", (req, res) =>
+  router.get("/get-leaderboards/:limit", (req, res) =>
     userController.getUserLeaderboards(req, res)
   );
 

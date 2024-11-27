@@ -94,12 +94,18 @@ const rowContent = (columns, row) => (
 export default function WithdrawTable({ columns, rows }) {
   return (
     <div style={{ height: 250, width: "100%", border: "none" }}>
-      <TableVirtuoso
-        data={rows}
-        components={VirtuosoTableComponents}
-        fixedHeaderContent={() => fixedHeaderContent(columns)}
-        itemContent={(index, row) => rowContent(columns, row)}
-      />
+      {rows.length > 0 ? (
+        <TableVirtuoso
+          data={rows}
+          components={VirtuosoTableComponents}
+          fixedHeaderContent={() => fixedHeaderContent(columns)}
+          itemContent={(index, row) => rowContent(columns, row)}
+        />
+      ) : (
+        <div className="flex justify-center items-center h-[20vh]">
+          <p className="text-2xl tracking-wider">No Withdraws Yet</p>
+        </div>
+      )}
     </div>
   );
 }

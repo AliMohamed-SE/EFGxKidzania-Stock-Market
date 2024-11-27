@@ -5,11 +5,10 @@ import Loading from "../components/Loading";
 import AdminNavbar from "../components/admin/AdminNavbar";
 import { Stack } from "@mui/material";
 import AdminSidebar from "../components/admin/AdminSidebar";
-import AdminDashboard from "../components/admin/AdminDashboard";
-import { AdminCompanies } from "../components/admin/AdminCompanies";
-import AdminUsers from "../components/admin/AdminUsers";
-import AdminTransactions from "../components/admin/AdminTransactions";
-import AdminSettings from "../components/admin/AdminSettings";
+import AdminDashboard from "../sections/admin/AdminDashboard";
+import AdminCompanies from "../sections/admin/AdminCompanies";
+import AdminUsers from "../sections/admin/AdminUsers";
+import AdminTransactions from "../sections/admin/AdminTransactions";
 
 const AdminHome = () => {
   const navigate = useNavigate();
@@ -36,9 +35,6 @@ const AdminHome = () => {
 
   let content;
   switch (selectedPage) {
-    case "Dashboard":
-      content = <AdminDashboard />;
-      break;
     case "Companies":
       content = <AdminCompanies />;
       break;
@@ -48,21 +44,16 @@ const AdminHome = () => {
     case "Transactions":
       content = <AdminTransactions />;
       break;
-    case "Settings":
-      content = <AdminSettings />;
-      break;
     default:
-      content = <AdminDashboard />;
+      content = <AdminCompanies />;
   }
 
   return (
-    <section className="overflow-hidden">
+    <section className="overflow-hidden max-h-[100vh]">
       <AdminNavbar />
       <Stack direction={"row"}>
         <AdminSidebar onPageChange={handlePageChange} />
-        <div className="flex-1 p-4">
-          {content}
-        </div>
+        <div className="flex-1 p-5">{content}</div>
       </Stack>
     </section>
   );

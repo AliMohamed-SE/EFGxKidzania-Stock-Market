@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Chip, Avatar, Box } from "@mui/material";
 import { useAuth } from "../providers/AuthProvider";
+import { useNavigate } from "react-router";
 
 const Navbar = () => {
-  const { user, backendUrl } = useAuth();
+  const { user, setUser, backendUrl } = useAuth();
+  const navigate = useNavigate();
+
+  const [logoutClicked, setLogoutClicked] = useState(false);
+
+  const logoutHandle = async () => {
+    sessionStorage.removeItem("token");
+    await setUser(null);
+    navigate("/login");
+  };
   return (
     <div className="flex flex-row justify-between items-center h-24 bg-white w-screen overflow-hidden">
       <div className="w-[58%] flex justify-end">
@@ -26,9 +36,9 @@ const Navbar = () => {
                   Hi, {user.first_name} {user.last_name}!
                 </h6>
                 <p className="text-sm font-bold">
-                  Balance:{" "}
+                  Wallet Balance:{" "}
                   <span className="font-normal text-white-200 relative">
-                    {user.getTotalBalance().toLocaleString()}{" "}
+                    {user.wallet_balance.toLocaleString()}{" "}
                     <img
                       src="/images/KidZosicon.svg"
                       alt="Kidzos coins"
@@ -38,12 +48,21 @@ const Navbar = () => {
                 </p>
               </div>
             </div>
-            <button>
+            <button onClick={() => setLogoutClicked((prev) => !prev)}>
               {" "}
               <img src="/images/tripledots.svg" className="mr-1" />
             </button>
           </div>
         </div>
+      )}
+      {logoutClicked && (
+        <button
+          className="flex flex-row justify-start items-center gap-3 absolute right-8 top-22 w-[246px] h-[67px] bg-white rounded-xl p-5 shadow-lg"
+          onClick={logoutHandle}
+        >
+          <img src="/images/logout.svg" alt="Logout" />
+          <p className="text-[20px] tracking-wider">Logout</p>
+        </button>
       )}
     </div>
   );

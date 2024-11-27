@@ -7,6 +7,7 @@ import { useAuth } from "../providers/AuthProvider";
 import Return from "./Return";
 
 const Images = ({ image1, image2, image3, image4 }) => {
+  const { backendUrl } = useAuth();
   return (
     <div className="pt-5 flex justify-center items-center relative w-[90%]">
       {/* main Image (Highest Percentage) */}
@@ -17,7 +18,7 @@ const Images = ({ image1, image2, image3, image4 }) => {
         }}
       >
         <img
-          src={`/images/logos/${image1}.svg`}
+          src={`${backendUrl}/images/logos/${image1}`}
           className="w-full h-full object-fit"
         />
       </div>
@@ -31,7 +32,7 @@ const Images = ({ image1, image2, image3, image4 }) => {
           }}
         >
           <img
-            src={`/images/logos/${image2}.svg`}
+            src={`${backendUrl}/images/logos/${image2}`}
             className="w-full h-full object-fit"
           />
         </div>
@@ -45,7 +46,7 @@ const Images = ({ image1, image2, image3, image4 }) => {
           }}
         >
           <img
-            src={`/images/logos/${image3}.svg`}
+            src={`${backendUrl}/images/logos/${image3}`}
             className="w-full h-full object-fit"
           />
         </div>
@@ -59,7 +60,7 @@ const Images = ({ image1, image2, image3, image4 }) => {
           }}
         >
           <img
-            src={`/images/logos/${image4}.svg`}
+            src={`${backendUrl}/images/logos/${image4}`}
             className="w-full h-full object-fit"
           />
         </div>
@@ -103,7 +104,7 @@ const StocksBought = ({ userStocks, setNumberOfAssets }) => {
       userStocks.forEach((stock) => {
         const id = stock.companyId._id;
         const companyName = stock.companyId.name;
-        const companyLogo = stock.companyId.acronym;
+        const companyLogo = stock.companyId.logo;
         const stockValue = stock.quantity * stock.companyId.current_price;
         const spent = stock.quantity * stock.buy_price;
         totalStockValue += stockValue;
@@ -169,7 +170,9 @@ const StocksBought = ({ userStocks, setNumberOfAssets }) => {
   }, [userStocks, user]);
   return (
     <Stack spacing={2} className="bg-white w-[350px] h-[770px] rounded-xl p-4">
-      <h3 className="text-3xl text-[#6E7191] font-semibold">Stocks Bought</h3>
+      <h3 className="text-3xl text-[#6E7191] font-semibold">
+        Current Stock Value
+      </h3>
       <div className={`relative w-[60%]`}>
         <div className="flex flex-row gap-7 items-start">
           <Price
@@ -216,14 +219,29 @@ const StocksBought = ({ userStocks, setNumberOfAssets }) => {
             {companySpendDetails.map((company) => (
               <div
                 key={"text" + company.company}
-                className="flex flex-row p-2 gap-2 pt-3 items-center"
+                className="flex flex-row p-2 gap-2 pt-4 items-center"
               >
                 <div
                   className={`w-3 h-3 rounded-full`}
                   style={{ backgroundColor: `${company.color}` }}
                 />
-                <p className="text-[#A0A3BD] w-[45%] overflow-hidden">
-                  {company.company}
+                <p
+                  className="text-[#A0A3BD] w-[45%] overflow-hidden"
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "8px",
+                    maxWidth: "150px",
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                  }}
+                >
+                  <span
+                    style={{ textOverflow: "ellipsis", overflow: "hidden" }}
+                  >
+                    {company.company}
+                  </span>
                 </p>
                 <Price
                   price={company.totalSpent.toLocaleString()}

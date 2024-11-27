@@ -19,6 +19,19 @@ class CompanyRepo {
     }
   };
 
+  deleteCompany = async (companyId, correlationId) => {
+    try {
+      this.logger.info("deleteCompany - deleting company from DB", {
+        correlationId,
+        Id: companyId,
+      });
+      const company = await Company.findByIdAndDelete(companyId);
+      return company;
+    } catch (error) {
+      throw new Error(`Error deleting company: ${error.message}`);
+    }
+  };
+
   updateCompany = async (data, correlationId) => {
     try {
       this.logger.info("updateCompany - updating company in DB", {
@@ -47,6 +60,24 @@ class CompanyRepo {
       return company;
     } catch (error) {
       throw new Error(`Error retrieving company by ID: ${error.message}`);
+    }
+  };
+
+  getCompanyByEstablishmentType = async (type, correlationId) => {
+    try {
+      this.logger.info(
+        "getCompanyByEstablishmentType - retrieving company info from DB",
+        {
+          correlationId,
+          type: type,
+        }
+      );
+      const company = await Company.findOne({ establishment_type: type });
+      return company;
+    } catch (error) {
+      throw new Error(
+        `Error retrieving company by Establishment Type: ${error.message}`
+      );
     }
   };
 
@@ -138,19 +169,45 @@ class CompanyRepo {
     }
   };
 
-  updateCompany = async (companyId, data, correlationId) => {
+  updateCompany = async (data, correlationId) => {
     try {
       this.logger.info("updateCompany - Updating company information in DB", {
         correlationId,
-        Id: companyId,
+        Id: data.companyId,
       });
 
-      const company = await Company.findByIdAndUpdate(companyId, data, {
+      const company = await Company.findByIdAndUpdate(data.companyId, data, {
         new: true,
       });
       return company;
     } catch (error) {
       throw new Error(`Error updating company: ${error.message}`);
+    }
+  };
+
+  updateVisitors = async (bulkOperations, correlationId) => {
+    try {
+      // Execute the bulk operations
+      if (bulkOperations.length > 0) {
+        this.logger.info("Executing bulk database update for visitors", {
+          correlationId,
+          numberOfOperations: bulkOperations.length,
+        });
+
+        const result = await Company.bulkWrite(bulkOperations);
+
+        this.logger.info("Bulk update executed successfully", {
+          correlationId,
+          date: new Date(),
+        });
+
+        return result;
+      } else {
+        this.logger.warn("No bulk operations were prepared", { correlationId });
+        return { message: "No updates to perform" };
+      }
+    } catch (error) {
+      throw new Error(`Error updating company visitors ${error.message}`);
     }
   };
 

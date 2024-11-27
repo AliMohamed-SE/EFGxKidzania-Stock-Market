@@ -8,8 +8,10 @@ import { stocksHistoryService } from "../services/stocksHistory.service";
 import Loading from "./Loading";
 import DataChart from "./DataChart";
 import BuyStockWindow from "./BuyStockWindow";
+import { useAuth } from "../providers/AuthProvider";
 
 const CompanyDetailsModal = memo(({ open, handleClose, company }) => {
+  const { backendUrl } = useAuth();
   const [companyHistory, setCompanyHistory] = useState([]);
   const [monthlyVisitors, setMonthlyVisitors] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -139,7 +141,14 @@ const CompanyDetailsModal = memo(({ open, handleClose, company }) => {
       >
         <div className="flex flex-row mb-10">
           <div className="flex flex-col gap-2">
-            <h3 className="font-semibold text-[32px]">Company Details</h3>
+            <div className="flex flex-row gap-4 justify-center items-center">
+              <img
+                src={`${backendUrl}/images/logos/${company.logo}`}
+                width={53}
+                height={53}
+              />
+              <h3 className="font-semibold text-[32px]"> {company.name}</h3>
+            </div>
           </div>
           <div
             className="flex flex-row items-center text-2xl gap-2 ml-auto"
@@ -200,7 +209,7 @@ const CompanyDetailsModal = memo(({ open, handleClose, company }) => {
             </div>
           </animated.div>
         </Stack>
-        <div className="w-full flex justify-end items-center mt-8">
+        <div className="w-full flex justify-end items-center mt-8 pr-5">
           {company && buy === false && (
             <button
               href="/"

@@ -4,38 +4,24 @@ import { useNavigate } from "react-router-dom";
 const NAV_ITEMS = [
   {
     id: 1,
-    label: "Dashboard",
-    selectedicon: "/images/admin/selected_dashboard.svg",
-    icon: "/images/admin/dashboard.svg",
-    page: "Dashboard",
-  },
-  {
-    id: 2,
     label: "Companies",
     selectedicon: "/images/admin/selected_companies.svg",
     icon: "/images/admin/companies.svg",
     page: "Companies",
   },
   {
-    id: 3,
+    id: 2,
     label: "Users",
     selectedicon: "/images/admin/selected_users.svg",
     icon: "/images/admin/users.svg",
     page: "Users",
   },
   {
-    id: 4,
+    id: 3,
     label: "Transactions",
     selectedicon: "/images/admin/selected_transactions.svg",
     icon: "/images/admin/transactions.svg",
     page: "Transactions",
-  },
-  {
-    id: 5,
-    label: "Settings",
-    selectedicon: "/images/admin/selected_settings.svg",
-    icon: "/images/admin/settings.svg",
-    page: "Settings",
   },
 ];
 

@@ -52,9 +52,9 @@ const fetchUser = async (username) => {
   }
 };
 
-const fetchLeaderboards = async () => {
+const fetchLeaderboards = async (limit) => {
   try {
-    const response = await apiClient.get(`users/get-leaderboards`);
+    const response = await apiClient.get(`users/get-leaderboards/${limit}`);
 
     return response.data;
   } catch (error) {

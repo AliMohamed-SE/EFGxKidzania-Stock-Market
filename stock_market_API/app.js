@@ -19,6 +19,7 @@ import StocksHistoryRoutes from "./src/StocksHistory/StocksHistoryRoutes.js";
 import UserStocksRoutes from "./src/UserStocks/UserStocksRoutes.js";
 import UserProfitRoutes from "./src/UserProfit/UserProfitRoutes.js";
 import UserWithdrawRoutes from "./src/UserWithdraw/UserWithdrawRoutes.js";
+import TransactionRoutes from "./src/Transaction/TransactionRoutes.js";
 import AdminRoutes from "./src/Admin/AdminRoutes.js";
 import { startCronJobs } from "./src/jobs/userUpdateJobs.js";
 
@@ -44,6 +45,7 @@ const stocksHistoryController = container.resolve("stocksHistoryController");
 const userStocksController = container.resolve("userStocksController");
 const userProfitController = container.resolve("userProfitController");
 const userWithdrawController = container.resolve("userWithdrawController");
+const transactionController = container.resolve("transactionController");
 const adminController = container.resolve("adminController");
 
 app.use("/api/users", UserRoutes(userController));
@@ -52,6 +54,7 @@ app.use("/api/stocksHistory", StocksHistoryRoutes(stocksHistoryController));
 app.use("/api/userStocks", UserStocksRoutes(userStocksController));
 app.use("/api/userProfit", UserProfitRoutes(userProfitController));
 app.use("/api/userWithdraw", UserWithdrawRoutes(userWithdrawController));
+app.use("/api/transactions", TransactionRoutes(transactionController));
 app.use("/api/admin", AdminRoutes(adminController));
 
 // Error Handler

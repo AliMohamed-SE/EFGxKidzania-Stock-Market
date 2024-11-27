@@ -18,6 +18,8 @@ import UserStocksService from "./src/UserStocks/UserStocksService.js";
 import UserStocksController from "./src/UserStocks/UserStocksController.js";
 
 import TransactionRepo from "./src/Transaction/TransactionRepo.js";
+import TransactionService from "./src/Transaction/TransactionService.js";
+import TransactionController from "./src/Transaction/TransactionController.js";
 
 import UserProfitRepo from "./src/UserProfit/UserProfitRepo.js";
 import UserProfitService from "./src/UserProfit/UserProfitService.js";
@@ -52,6 +54,8 @@ container.register({
   userStocksController: asClass(UserStocksController).scoped(),
 
   transactionRepo: asClass(TransactionRepo).scoped(),
+  transactionService: asClass(TransactionService).scoped(),
+  transactionController: asClass(TransactionController).scoped(),
 
   userProfitRepo: asClass(UserProfitRepo).scoped(),
   userProfitService: asClass(UserProfitService).scoped(),

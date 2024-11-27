@@ -2,9 +2,12 @@ import React, { memo } from "react";
 import Loading from "../components/Loading";
 import Grid2 from "@mui/material/Grid2";
 import CompanyCard from "./CompanyCard";
+import { useLocation } from "react-router";
 
 const CompanyList = memo(
   ({ companiesLoading, filteredcompanies, handleOpen }) => {
+    const location = useLocation();
+    const isAdminHome = location.pathname === "/admin/home";
     return (
       <div>
         {companiesLoading ? (
@@ -12,12 +15,12 @@ const CompanyList = memo(
             <Loading otherClasses={"w-7 h-7"} />
           </div>
         ) : (
-          <div className="overflow-auto max-h-[60vh]">
-            <Grid2
-              container
-              rowSpacing={1}
-              columnSpacing={{ xs: 1, sm: 2, md: 3 }}
-            >
+          <div
+            className={`overflow-auto ${
+              isAdminHome ? "max-h-[74vh]" : "max-h-[62vh]"
+            }`}
+          >
+            <Grid2 container rowSpacing={2} columnSpacing={2}>
               {filteredcompanies.length > 0 ? (
                 filteredcompanies.map((company) => (
                   <CompanyCard

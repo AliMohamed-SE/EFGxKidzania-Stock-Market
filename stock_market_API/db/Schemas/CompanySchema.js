@@ -17,6 +17,14 @@ const companySchema = mongoose.Schema(
       type: String,
       required: [true, "Please enter a description for the company"],
     },
+    establishment_type: {
+      type: String,
+      required: [true, "Please enter an establishment type for the company"],
+    },
+    logo: {
+      type: String,
+      required: [true, "Please upload a logo for the company"],
+    },
     current_price: {
       type: Number,
       required: [true, "Every company must have a stock price"],

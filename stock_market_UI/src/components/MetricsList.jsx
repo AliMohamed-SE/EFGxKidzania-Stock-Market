@@ -6,6 +6,9 @@ import Return from "../components/Return";
 
 import Box from "@mui/material/Box";
 import DataTable from "../components/DataTable.jsx";
+import { companyService } from "../services/company.service.js";
+import Loading from "./Loading.jsx";
+import { useAuth } from "../providers/AuthProvider.jsx";
 
 const style = {
   position: "absolute",
@@ -27,11 +30,14 @@ const MetricsItem = memo(
     description,
     name,
     acronym,
+    logo,
     price,
     current_return,
+    number,
     companyList,
     openCompany,
   }) => {
+    const { backendUrl } = useAuth();
     const [open, setOpen] = useState(false);
     const handleOpen = useCallback(() => setOpen(true), []);
     const handleClose = useCallback(() => setOpen(false), []);
@@ -42,7 +48,7 @@ const MetricsItem = memo(
     }, []);
 
     return (
-      <div className="bg-white relative md:w-[51rem] md:h-[10rem] w-full rounded-xl flex flex-row p-4">
+      <div className="bg-white relative w-full rounded-xl flex flex-row p-4">
         <Stack className="w-[70%] gap-5">
           <h4 className="flex flex-row items-center gap-2 text-lg">
             <img src={`/images/${icon}.svg`} />
@@ -50,36 +56,72 @@ const MetricsItem = memo(
           </h4>
           <p className="leading-8">
             {description}{" "}
-            <button onClick={handleOpen}>
-              <p className="flex flex-row gap-2 justify-center items-center underline text-purple">
-                View Rankings <img src="/images/expand.svg" alt="Expand" />
-              </p>
-            </button>
+            {companyList.length > 0 && (
+              <button onClick={handleOpen}>
+                <p className="flex flex-row gap-2 justify-center items-center underline text-purple">
+                  View Rankings <img src="/images/expand.svg" alt="Expand" />
+                </p>
+              </button>
+            )}
           </p>
         </Stack>
 
         <div className="relative w-[30%]">
           {/* Background Image */}
-          <img
-            src={`/images/logos/${acronym}.svg`}
-            alt={`${name} logo`}
-            className="absolute inset-0 opacity-10 w-full h-full object-contain"
-            style={{ right: 0, top: 0 }}
-          />
+          {logo && (
+            <img
+              src={`${backendUrl}/images/logos/${logo}`}
+              alt={`${name} logo`}
+              className="absolute inset-0 opacity-10 w-full h-full object-contain"
+              style={{ right: 0, top: 0 }}
+            />
+          )}
 
-          <Stack className="relative text-right gap-4">
+          <Stack className="relative text-right gap-8">
             <p className="text-sm">Last 24h</p>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               <p className="text-lg font-semibold">
-                {name} ({acronym})
+                {name ? { name }({ acronym }) : "No Company Yet"}
               </p>
-              <h1 className="text-3xl flex flex-row gap-4 items-center justify-end">
-                <Price price={price} styles="absolute -right-5 -top-1 w-5" />
-                <Return
-                  type={current_return > 0 ? "positive" : "negative"}
-                  number={Math.abs(current_return)}
-                />
-              </h1>
+              {(title === "Trending Now" || title === "Highest Return") && (
+                <h1 className="text-3xl flex flex-row gap-4 items-center justify-end">
+                  <Price price={price} styles="absolute -right-5 -top-1 w-5" />
+                  {current_return && (
+                    <Return
+                      type={current_return > 0 ? "positive" : "negative"}
+                      number={Math.abs(current_return)}
+                    />
+                  )}
+                </h1>
+              )}
+              {(title === "Most Traded" || title === "Most Visited") && (
+                <div className="text-3xl flex flex-row gap-2 items-center justify-end -translate-y-2">
+                  {title === "Most Traded" ? (
+                    <img
+                      src="/images/most_traded_icon.svg"
+                      alt="Change"
+                      width={38}
+                      height={38}
+                    />
+                  ) : (
+                    <img
+                      src="/images/visitors.svg"
+                      alt="Change"
+                      width={38}
+                      height={38}
+                    />
+                  )}
+                  <div className="flex flex-col gap-0 justify-center">
+                    <p className="text-[20px] font-semibold h-6">
+                      {" "}
+                      {number && number.toLocaleString()}
+                    </p>
+                    <span className="text-white-300 text-[12px]">
+                      {title === "Most Traded" ? "Trades" : "Visitors"}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
           </Stack>
         </div>
@@ -116,66 +158,101 @@ const MetricsItem = memo(
   }
 );
 
-const MetricsList = React.memo(({ metrics, handleOpen }) => {
+const MetricsList = React.memo(({ handleOpen }) => {
+  const [metrics, setMetrics] = useState({
+    trending_now: [],
+    most_traded: [],
+    highest_return: [],
+    most_visited: [],
+  });
+  const [metricsLoading, setMetricsLoading] = useState(false);
+
+  const fetchMetricsData = async () => {
+    setMetricsLoading(true);
+    try {
+      const metrics = await companyService.getMetrics();
+      setMetrics(metrics);
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setMetricsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    fetchMetricsData();
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
+
+  if (metricsLoading) {
+    return (
+      <div className="flex justify-center items-center h-[70vh]">
+        <Loading otherClasses={"w-8 h-8"} />
+      </div>
+    );
+  }
+
   return (
-    <Stack spacing={2.5}>
-      {metrics.trending_now.length > 0 && (
+    <div>
+      <Stack spacing={2.5}>
         <MetricsItem
           title="Trending Now"
           tableHeader="Current Number of Investors"
           icon="trending_now"
           description="A stock that is trending right means that many kids in Kidzania are starting to invest in it right now."
-          name={metrics.trending_now[0].name}
-          acronym={metrics.trending_now[0].acronym}
-          price={metrics.trending_now[0].current_price}
-          current_return={metrics.trending_now[0].current_return}
+          name={metrics.trending_now[0]?.name}
+          acronym={metrics.trending_now[0]?.acronym}
+          logo={metrics.trending_now[0]?.logo}
+          price={metrics.trending_now[0]?.current_price}
+          current_return={metrics.trending_now[0]?.current_return}
           companyList={metrics.trending_now}
           openCompany={handleOpen}
         />
-      )}
-      {metrics.most_traded.length > 0 && (
         <MetricsItem
           title="Most Traded"
           tableHeader="Number of Trades"
           icon="most_traded"
           description="A stock that is most traded means that it has received the highest number of trades out all other stocks."
-          name={metrics.most_traded[0].name}
-          acronym={metrics.most_traded[0].acronym}
-          price={metrics.most_traded[0].current_price}
-          current_return={metrics.most_traded[0].current_return}
+          name={metrics.most_traded[0]?.name}
+          acronym={metrics.most_traded[0]?.acronym}
+          logo={metrics.most_traded[0]?.logo}
+          number={metrics.most_traded[0]?.number_of_trades}
           companyList={metrics.most_traded}
           openCompany={handleOpen}
         />
-      )}
-      {metrics.highest_return.length > 0 && (
         <MetricsItem
           title="Highest Return"
           tableHeader="Return %"
           icon="highest_return"
           description="A stock with the highest return means that it made made the biggest profit for investors compared to all other stocks."
-          name={metrics.highest_return[0].name}
-          acronym={metrics.highest_return[0].acronym}
-          price={metrics.highest_return[0].current_price}
-          current_return={metrics.highest_return[0].current_return}
+          name={metrics.highest_return[0]?.name}
+          acronym={metrics.highest_return[0]?.acronym}
+          logo={metrics.highest_return[0]?.logo}
+          price={metrics.highest_return[0]?.current_price}
+          current_return={metrics.highest_return[0]?.current_return}
           companyList={metrics.highest_return}
           openCompany={handleOpen}
         />
-      )}
-      {metrics.most_visited.length > 0 && (
         <MetricsItem
           title="Most Visited"
           tableHeader="Visitors"
           icon="most_visited"
           description="A stock that is most visited means that it has received has the highest number of visitors to its establishment in Kidzania."
-          name={metrics.most_visited[0].name}
-          acronym={metrics.most_visited[0].acronym}
-          price={metrics.most_visited[0].current_price}
-          current_return={metrics.most_visited[0].current_return}
+          name={metrics.most_visited[0]?.name}
+          acronym={metrics.most_visited[0]?.acronym}
+          logo={metrics.most_visited[0]?.logo}
+          number={metrics.most_traded[0]?.current_visitors}
           companyList={metrics.most_visited}
           openCompany={handleOpen}
         />
-      )}
-    </Stack>
+      </Stack>
+    </div>
   );
 });
 

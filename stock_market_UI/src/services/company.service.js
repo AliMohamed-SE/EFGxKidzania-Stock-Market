@@ -22,7 +22,47 @@ const getMetrics = async () => {
   }
 };
 
+const updateCompany = async (formData) => {
+  try {
+    await apiClient.put("companies/update-company", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  } catch (error) {
+    throw new Error("Error updating company");
+  }
+};
+
+const addCompany = async (formData) => {
+  try {
+    await apiClient.post("companies/", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+  } catch (error) {
+    throw new Error("Error adding company");
+  }
+};
+
+const deleteCompany = async (companyId) => {
+  try {
+    await apiClient.delete(`companies/${companyId}`);
+  } catch (error) {
+    throw new Error("Error deleting company");
+  }
+};
+
+const updateVisitors = async (visitors) => {
+  try {
+    await apiClient.put("companies/update-visitors", visitors);
+  } catch (error) {
+    throw new Error("Error updating visitors");
+  }
+};
+
 export const companyService = {
   getCompanies,
   getMetrics,
+  updateCompany,
+  addCompany,
+  deleteCompany,
+  updateVisitors,
 };

@@ -75,14 +75,16 @@ class UserService {
     }
   };
 
-  getUserLeaderboards = async (correlationId) => {
+  getUserLeaderboards = async (limit, correlationId) => {
     try {
       const highestNumberOfTrades =
-        await this.userRepo.getHighestNumberOfTrades(correlationId);
+        await this.userRepo.getHighestNumberOfTrades(limit, correlationId);
       const highestReturn = await this.userProfitRepo.getHighestReturn(
+        limit,
         correlationId
       );
       const biggestInvestment = await this.userRepo.getBiggestInvestment(
+        limit,
         correlationId
       );
 

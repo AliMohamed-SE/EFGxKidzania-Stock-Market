@@ -117,18 +117,21 @@ class UserController {
 
   getUserLeaderboards = async (req, res) => {
     const correlationId = req.headers["x-correlation-id"] || uuidv4();
-
+    const { limit } = req.params;
     try {
       this.logger.info("getUserLeaderboards - Request received", {
         correlationId,
+        limit,
       });
 
       const leaderboards = await this.userService.getUserLeaderboards(
+        limit,
         correlationId
       );
 
       this.logger.info("getUserLeaderboards - Successfully fetched", {
         correlationId,
+        limit,
       });
 
       res.status(200).json(leaderboards);

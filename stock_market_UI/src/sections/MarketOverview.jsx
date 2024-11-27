@@ -14,13 +14,6 @@ const MarketOverview = ({ balance }) => {
   const [availableCompanies, setAvailableCompanies] = useState([]);
   const [filteredcompanies, setFilteredcompanies] = useState([]);
   const [searchText, setSearchText] = useState("");
-
-  const [metrics, setMetrics] = useState({
-    trending_now: [],
-    most_traded: [],
-    highest_return: [],
-    most_visited: [],
-  });
   const [companiesLoading, setCompaniesLoading] = useState(false);
 
   const [open, setOpen] = useState(false);
@@ -55,21 +48,11 @@ const MarketOverview = ({ balance }) => {
     }
   };
 
-  const fetchMetricsData = async () => {
-    try {
-      const metrics = await companyService.getMetrics();
-      setMetrics(metrics);
-    } catch (error) {
-      console.log(error.message);
-    }
-  };
-
   useEffect(() => {
     const controller = new AbortController();
     const signal = controller.signal;
 
     fetchAvailableCompanies();
-    fetchMetricsData();
 
     return () => {
       setAvailableCompanies([]);
@@ -92,9 +75,9 @@ const MarketOverview = ({ balance }) => {
   return (
     <section className="min-h-[70vh] pt-12">
       <Stack direction={{ md: "column", lg: "row" }} spacing={0}>
-        <Stack spacing={2} width={{ md: "100%", lg: "60%" }} className="mr-5">
+        <Stack spacing={2} className="mr-5 md:w-[51rem] md:h-[10rem]">
           <h3 className="text-2xl font-bold">Interesting Metrics</h3>
-          <MetricsList metrics={metrics} handleOpen={handleOpen} />
+          <MetricsList handleOpen={handleOpen} />
         </Stack>
         <Stack spacing={2} width={{ md: "100%", lg: "40%" }}>
           <h3 className="text-2xl font-bold">Companies You Can Invest In</h3>

@@ -2,21 +2,42 @@ import React, { memo } from "react";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid2";
 import Price from "../components/Price";
+import { useLocation } from "react-router";
+import { useAuth } from "../providers/AuthProvider";
 
 const CompanyCard = memo(({ company, handleOpen }) => {
-  console.log(company.current_return);
+  const { backendUrl } = useAuth();
+  const location = useLocation();
+  const isAdminHome = location.pathname === "/admin/home";
   return (
-    <Grid key={company._id} size={6} className="bg-white rounded-xl p-3">
+    <Grid
+      key={company._id}
+      size={isAdminHome ? 4 : 6}
+      className="bg-white rounded-xl p-3"
+    >
       <Stack spacing={1}>
         <div className="flex flex-row justify-between text-sm font-semibold">
-          <div className="flex flex-row gap-3 justify-center items-center h-12">
+          <div
+            className="flex flex-row gap-3 justify-center items-center h-12"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              maxWidth: "150px",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
             <img
-              src={`/images/logos/${company.acronym}.svg`}
+              src={`${backendUrl}/images/logos/${company.logo}`}
               alt="Logo"
               width="40px"
               height="40px"
             />
-            {company.name}
+            <span style={{ textOverflow: "ellipsis", overflow: "hidden" }}>
+              {company.name}
+            </span>
           </div>
 
           {company.current_return > 0 ? (
@@ -40,15 +61,25 @@ const CompanyCard = memo(({ company, handleOpen }) => {
             <img src="/images/change.svg" alt="Change" />
             Change
           </div>
-          <Price
-            price={`${company.current_change < 0 ? "" : "+"}${
-              company.current_change
-            }`}
-            styles="absolute -right-3 top-0 w-3"
-            textStyles={`${
-              company.current_change < 0 ? "text-red-600" : "text-green-500"
-            }`}
-          />
+          <div className="flex flex-row gap-4 justify-center items-center">
+            <Price
+              price={`${company.current_change < 0 ? "" : "+"}${
+                company.current_change
+              }`}
+              styles="absolute -right-3.5 top-0 w-3"
+              textStyles={`${
+                company.current_change < 0 ? "text-red-600" : "text-green-500"
+              }`}
+            />
+            <p
+              className={`text-sm tracking-wider ${
+                company.current_return < 0 ? "text-red-600" : "text-green-500"
+              }`}
+            >
+              ({company.current_return >= 0 && "+"}
+              {company.current_return.toFixed(2)}%)
+            </p>
+          </div>
         </div>
         <div className="flex flex-row justify-between pr-3">
           <div className="flex flex-row gap-3 justify-center items-center text-[#6E7191]">

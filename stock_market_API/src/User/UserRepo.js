@@ -163,15 +163,17 @@ class UserRepo {
     }
   }
 
-  async getHighestNumberOfTrades(correlationId) {
+  async getHighestNumberOfTrades(limit, correlationId) {
     try {
       this.logger.info("Fetching top users by number of trades", {
         correlationId,
+        limit,
       });
+      const parsedLimit = parseInt(limit, 10);
 
       const topUsers = await User.find()
         .sort({ number_of_trades: -1 })
-        .limit(4)
+        .limit(parsedLimit)
         .select("first_name last_name avatar");
 
       return topUsers;
@@ -180,15 +182,17 @@ class UserRepo {
     }
   }
 
-  async getBiggestInvestment(correlationId) {
+  async getBiggestInvestment(limit, correlationId) {
     try {
       this.logger.info("Fetching top users by biggest investment", {
         correlationId,
+        limit,
       });
+      const parsedLimit = parseInt(limit, 10);
 
       const topUsers = await User.find()
         .sort({ total_invested_amount: -1 })
-        .limit(4)
+        .limit(parsedLimit)
         .select("first_name last_name avatar");
 
       return topUsers;

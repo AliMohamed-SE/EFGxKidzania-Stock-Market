@@ -48,11 +48,11 @@ const MyPortfolio = ({ withdrawHandle }) => {
         />
         <div className="w-[950px] h-[770px] flex flex-col gap-5">
           <div className="h-[375px] w-full flex flex-row justify-between">
-            <div className="bg-white rounded-2xl p-4 w-[375px]">
+            {/* <div className="bg-white rounded-2xl p-4 w-[375px]">
               <ProfitMade setSuccessRate={setSuccessRate} />
-            </div>
-            <div className="bg-purple rounded-2xl w-[552px] p-5 pr-0 overflow-hidden">
-              <BalanceBreakdown user={user} withdrawHandle={withdrawHandle} />
+            </div> */}
+            <div className="bg-purple rounded-2xl w-full p-5 pr-0 overflow-hidden">
+              <BalanceBreakdown withdrawHandle={withdrawHandle} />
             </div>
           </div>
           <div className="h-[375px] w-full bg-white rounded-2xl flex items-center">

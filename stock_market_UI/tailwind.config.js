@@ -38,6 +38,7 @@ export default {
       fontFamily: {
         inter: ["Inter", "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
+        planet: ["Planet Joust", "sans-serif"],
       },
       transitionProperty: {
         borderColor: "border-color",

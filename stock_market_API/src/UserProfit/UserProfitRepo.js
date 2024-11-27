@@ -59,11 +59,14 @@ class UserProfitRepo {
   }
 
   // Gets the top users by highest return on investment (ROI)
-  async getHighestReturn(correlationId) {
+  async getHighestReturn(limit, correlationId) {
     try {
-      this.logger.info("Get Top 4 Users with highest return", {
+      this.logger.info("Get Top Users with highest return", {
         correlationId,
+        limit,
       });
+
+      const parsedLimit = parseInt(limit, 10);
 
       const topUsers = await UserProfit.aggregate([
         {
@@ -90,7 +93,7 @@ class UserProfitRepo {
           },
         },
         { $sort: { avgROI: -1 } },
-        { $limit: 4 },
+        { $limit: parsedLimit },
         {
           $project: {
             userId: "$_id",

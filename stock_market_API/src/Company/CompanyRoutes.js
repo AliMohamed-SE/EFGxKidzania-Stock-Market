@@ -1,17 +1,24 @@
 "use strict";
 import express from "express";
+import upload from "../util/multer.js";
 
 const CompanyRoutes = (companyController) => {
   const router = express.Router();
 
-  router.post("/", (req, res) => companyController.createCompany(req, res));
+  router.post("/", upload.single("logo"), (req, res) =>
+    companyController.createCompany(req, res)
+  );
 
-  router.put("/update-company", (req, res) =>
+  router.delete("/:companyId", (req, res) =>
+    companyController.deleteCompany(req, res)
+  );
+
+  router.put("/update-company", upload.single("logo"), (req, res) =>
     companyController.updateCompany(req, res)
   );
 
-  router.put("/update-companies", (req, res) =>
-    companyController.updateCompanies(req, res)
+  router.put("/update-visitors", (req, res) =>
+    companyController.updateVisitors(req, res)
   );
 
   router.get("/get-companies/:balance", (req, res) =>

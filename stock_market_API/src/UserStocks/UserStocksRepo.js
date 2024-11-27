@@ -119,6 +119,19 @@ class UserStockRepo {
     }
   }
 
+  async deleteUserStocksByCompany(companyId, correlationId) {
+    try {
+      this.logger.info(`Deleting user stocks for companyId=${companyId}`, {
+        correlationId,
+      });
+      await UserStock.deleteMany({
+        companyId: companyId,
+      });
+    } catch (error) {
+      throw new Error("Failed to delete user stocks");
+    }
+  }
+
   async updateUserStocks(userStocksId, quantity, correlationId) {
     try {
       this.logger.info(

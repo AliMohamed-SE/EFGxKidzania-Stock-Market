@@ -8,7 +8,7 @@ import { userService } from "../services/user.service.js";
 import UserEntity from "../entities/userEntity.js";
 
 const BuyStockWindow = ({ company }) => {
-  const { user, setUser } = useAuth();
+  const { user, setUser, backendUrl } = useAuth();
 
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -100,7 +100,7 @@ const BuyStockWindow = ({ company }) => {
           {" "}
           Buy {company.acronym}{" "}
           <img
-            src={`/images/logos/${company.acronym}.svg`}
+            src={`${backendUrl}/images/logos/${company.logo}`}
             width={30}
             height={30}
           />
