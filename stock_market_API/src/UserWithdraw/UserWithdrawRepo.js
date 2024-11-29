@@ -40,33 +40,41 @@ class UserWithdrawRepo {
   }
 
   // Get all user withdrawals
-  async getAllUserWithdraws(correlationId) {
-    this.logger.info(
-      "getAllUserWithdraws - Fetching all user withdrawals from the DB",
-      {
-        correlationId,
-      }
-    );
-
+  async getAllUserWithdraws(page, order, correlationId) {
     try {
-      const userWithdraws = await UserWithdraw.find();
-      this.logger.info(
-        "getAllUserWithdraws - Successfully fetched user withdrawals",
-        {
-          correlationId,
-          withdrawalsCount: userWithdraws.length,
-        }
-      );
-      return userWithdraws;
+      const pageNumber = page ? page : 1;
+      const pageSize = 10; // Number of records per page
+      const skip = (pageNumber - 1) * pageSize; // Calculate the number of records to skip
+      const sortOrder = order === "asc" ? 1 : -1; // Determine the sort order (ascending or descending)
+
+      this.logger.info("getBuyTransactions - Fetching buy transactions", {
+        correlationId,
+        pageNumber,
+        order,
+      });
+
+      // Get the total number of records in the collection
+      const totalRecords = await UserWithdraw.countDocuments();
+
+      // Calculate the total number of pages
+      const totalPages = Math.ceil(totalRecords / pageSize);
+
+      // Fetch the paginated and sorted records
+      const withdraws = await UserWithdraw.find()
+        .sort({ date: sortOrder }) // Sort by the `date` field
+        .skip(skip) // Skip records for pagination
+        .limit(pageSize); // Limit the number of records to the page size
+
+      return {
+        withdraws, // The fetched transactions
+        totalRecords, // Total number of records
+        totalPages, // Total number of available pages
+      };
     } catch (error) {
-      this.logger.error(
-        "getAllUserWithdraws - Error fetching user withdrawals - Repo",
-        {
-          correlationId,
-          error: error.message,
-          stack: error.stack,
-        }
-      );
+      this.logger.error("Error fetching buy transactions", {
+        correlationId,
+        error: error.message,
+      });
       throw error;
     }
   }

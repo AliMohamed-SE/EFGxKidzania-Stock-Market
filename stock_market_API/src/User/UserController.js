@@ -177,6 +177,78 @@ class UserController {
         .json({ success: false, message: "Failed to fetch avatars." });
     }
   };
+
+  getAllUsers = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
+    const { searchQuery, page } = req.query;
+
+    try {
+      this.logger.info("getAllUsers - Request Received", {
+        correlationId,
+        searchQuery,
+        page,
+      });
+
+      const users = await this.userService.getAllUsers(
+        searchQuery,
+        page,
+        correlationId
+      );
+
+      this.logger.info("getAllUsers - Successfully fetched users", {
+        correlationId,
+      });
+
+      res.status(200).json(users);
+    } catch (error) {
+      this.logger.error("getAllUsers - Server Error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
+
+      res
+        .status(500)
+        .json({ success: false, message: "Failed to fetch users." });
+    }
+  };
+
+  updateBalance = async (req, res) => {
+    const correlationId = req.headers["x-correlation-id"] || uuidv4();
+    const { balance, userId } = req.body;
+
+    try {
+      this.logger.info("updateBalance - Request Received", {
+        correlationId,
+        balance,
+        userId,
+      });
+
+      const users = await this.userService.updateBalance(
+        balance,
+        userId,
+        correlationId
+      );
+
+      this.logger.info("updateBalance - Successfully updated user's balance", {
+        correlationId,
+        userId,
+        balance,
+      });
+
+      res.status(200).json(users);
+    } catch (error) {
+      this.logger.error("updateBalance - Server Error", {
+        correlationId,
+        error: error.message,
+        stack: error.stack,
+      });
+
+      res
+        .status(500)
+        .json({ success: false, message: "Failed to update user's balance." });
+    }
+  };
 }
 
 export default UserController;

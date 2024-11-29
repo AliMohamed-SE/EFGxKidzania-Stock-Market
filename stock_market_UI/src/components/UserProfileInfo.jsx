@@ -12,7 +12,7 @@ const UserProfileInfo = ({ successRate, numberOfAssets }) => {
       <div className="flex flex-col items-center w-[300px] p-1 border-r-[1px] border-[#120804] h-[300px] gap-6">
         <div className="bg-white-100 rounded-full w-[205px] h-[205px] flex justify-center items-center">
           <img
-            src={`${backendUrl}/images/avatars/${user.avatar}.svg`}
+            src={`/images/avatars/${user.avatar}.svg`}
             alt="Avatar"
             className="bg-[#D88EA9] rounded-full w-[150px] h-[150px]"
           />
@@ -22,8 +22,7 @@ const UserProfileInfo = ({ successRate, numberOfAssets }) => {
             {user.getFullName()}
           </h3>
           <p className="text-2xl text-white-300">
-            {/* Joined {user.getCreatedDate()} */}
-            Joined March, 2024
+            Joined {user.getCreatedDate()}
           </p>
         </div>
       </div>

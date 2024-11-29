@@ -26,7 +26,7 @@ const Navbar = () => {
               <div className="bg-[#D88EA9] rounded-full w-12 h-12 flex justify-center items-center">
                 <Avatar
                   alt="avatar"
-                  src={`${backendUrl}/images/avatars/${user.avatar}.svg`}
+                  src={`/images/avatars/${user.avatar}.svg`}
                   sx={{ width: 46, height: 46 }}
                 />
               </div>

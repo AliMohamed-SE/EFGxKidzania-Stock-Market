@@ -2,6 +2,7 @@
 import express from "express";
 import { validate } from "express-validation";
 import { userValidation } from "../../validations/userValidation.js";
+import limiter from "../util/limiter.js";
 
 const UserRoutes = (userController) => {
   const router = express.Router();
@@ -14,6 +15,10 @@ const UserRoutes = (userController) => {
     userController.login(req, res)
   );
 
+  router.put("/update-balance", (req, res) =>
+    userController.updateBalance(req, res)
+  );
+
   router.get("/get-username/:username", (req, res) =>
     userController.getUserByUsername(req, res)
   );
@@ -24,6 +29,10 @@ const UserRoutes = (userController) => {
 
   router.get("/getall-avatars/:type", (req, res) =>
     userController.getAllAvatars(req, res)
+  );
+
+  router.get("/getall-users", limiter, (req, res) =>
+    userController.getAllUsers(req, res)
   );
 
   return router;

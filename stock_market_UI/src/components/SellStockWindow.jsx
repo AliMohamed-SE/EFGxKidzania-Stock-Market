@@ -8,7 +8,7 @@ import { userService } from "../services/user.service.js";
 import UserEntity from "../entities/userEntity.js";
 
 const SellStockWindow = ({ company }) => {
-  const { user, setUser } = useAuth();
+  const { user, setUser, backendUrl } = useAuth();
 
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -55,9 +55,9 @@ const SellStockWindow = ({ company }) => {
       <div className="flex flex-col gap-1">
         <h3 className="flex flex-row gap-2 items-center justify-start text-[27px] font-bold">
           {" "}
-          Buy {company.logo}{" "}
+          Buy {company.acronym}{" "}
           <img
-            src={`/images/logos/${company.logo}.svg`}
+            src={`${backendUrl}/images/logos/${company.logo}`}
             width={30}
             height={30}
           />

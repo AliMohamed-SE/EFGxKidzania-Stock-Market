@@ -17,7 +17,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/" element={<Home />} />
           <Route path="/admin/login" element={<AdminLogin />} />
-          <Route path="/admin/Home" element={<AdminHome />} />
+          <Route path="/admin/home" element={<AdminHome />} />
         </Routes>
       </Router>
     </AuthProvider>

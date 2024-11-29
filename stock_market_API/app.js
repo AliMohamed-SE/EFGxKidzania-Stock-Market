@@ -82,11 +82,12 @@ const startServer = async () => {
     startCronJobs();
 
     // Start Server
-    app.listen(PORT, (err) => {
+    app.listen(PORT, "0.0.0.0", (err) => {
       if (err) {
         console.error(`Error starting server: ${err.message}`);
       } else {
         console.log(`Server is running on port ${PORT}`);
+        console.log(`Access it on your LAN at http://192.168.1.12:${PORT}`);
       }
     });
   } catch (error) {

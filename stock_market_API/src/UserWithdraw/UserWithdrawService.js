@@ -70,25 +70,21 @@ class UserWithdrawService {
   };
 
   // Get all user withdrawals
-  getAllUserWithdraws = async (correlationId) => {
+  getAllUserWithdraws = async (page, order, correlationId) => {
     this.logger.info(
       "getAllUserWithdraws - Service layer: Fetching all user withdrawals",
       {
         correlationId,
+        page,
+        order,
       }
     );
 
     try {
       const userWithdraws = await this.userWithdrawRepo.getAllUserWithdraws(
+        page,
+        order,
         correlationId
-      );
-
-      this.logger.info(
-        "getAllUserWithdraws - Successfully fetched all user withdrawals in Service",
-        {
-          correlationId,
-          withdrawalsCount: userWithdraws.length,
-        }
       );
 
       return userWithdraws;

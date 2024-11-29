@@ -183,7 +183,6 @@ class UserStocksController {
 
       this.logger.info("getOneUserStocks - Success", {
         correlationId,
-        userStocks,
       });
       res.status(200).json(userStocks);
     } catch (error) {

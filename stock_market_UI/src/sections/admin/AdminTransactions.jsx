@@ -1,162 +1,320 @@
-import React, { useState } from "react";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TablePagination from "@mui/material/TablePagination";
-import TableRow from "@mui/material/TableRow";
+import React, { useEffect, useState } from "react";
+import Price from "../../components/Price";
+import Loading from "../../components/Loading";
+import { adminService } from "../../services/admin.services.js";
 import { format } from "date-fns";
-
-const columns = [
-  { id: "name", label: "Transaction ID", minWidth: 170 },
-  { id: "code", label: "User ID", minWidth: 100 },
-  {
-    id: "population",
-    label: "Date & Time",
-    minWidth: 170,
-    align: "right",
-    format: (value) => {
-      format(new Date(value), "dd MMM yyyy - hh.mm a");
-    },
-  },
-  {
-    id: "size",
-    label: "Size\u00a0(km\u00b2)",
-    minWidth: 170,
-    align: "right",
-    format: (value) => value.toLocaleString("en-US"),
-  },
-  {
-    id: "density",
-    label: "Density",
-    minWidth: 170,
-    align: "right",
-    format: (value) => value.toFixed(2),
-  },
-];
-
-function createData(name, code, population, size) {
-  const density = population / size;
-  return { name, code, population, size, density };
-}
-
-const rows = [
-  createData("India", "IN", 1324171354, 3287263),
-  createData("China", "CN", 1403500365, 9596961),
-  createData("Italy", "IT", 60483973, 301340),
-  createData("United States", "US", 327167434, 9833520),
-  createData("Canada", "CA", 37602103, 9984670),
-  createData("Australia", "AU", 25475400, 7692024),
-  createData("Germany", "DE", 83019200, 357578),
-  createData("Ireland", "IE", 4857000, 70273),
-  createData("Mexico", "MX", 126577691, 1972550),
-  createData("Japan", "JP", 126317000, 377973),
-  createData("France", "FR", 67022000, 640679),
-  createData("United Kingdom", "GB", 67545757, 242495),
-  createData("Russia", "RU", 146793744, 17098246),
-  createData("Nigeria", "NG", 200962417, 923768),
-  createData("Brazil", "BR", 210147125, 8515767),
-];
-
-const paginationModel = { page: 0, pageSize: 5 };
+import crypto from "crypto-js";
+import { userWithdrawService } from "../../services/userWithdraw.service.js";
 
 const AdminTransactions = () => {
-  const [selectedType, setSelectedType] = useState("buy");
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedType, setSelectedType] = useState("Buy");
+  const [transactions, setTransactions] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [dateOrder, setDateOrder] = useState("desc");
+  const [tableMetaData, setTableMetaData] = useState({
+    totalRecords: 0,
+    numberOfPages: 1,
+  });
+  const [loading, setLoading] = useState(false);
 
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+  const getShortId = (id) => {
+    return crypto.MD5(id).toString().slice(0, 7);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
+  const PAGE_WINDOW_SIZE = 6;
+
+  const getVisiblePages = () => {
+    const halfWindow = Math.floor(PAGE_WINDOW_SIZE / 2);
+    let startPage = currentPage - halfWindow;
+    let endPage = currentPage + halfWindow;
+
+    // Ensure startPage and endPage stay within bounds
+    if (startPage < 1) {
+      startPage = 1;
+      endPage = PAGE_WINDOW_SIZE;
+    }
+    if (endPage > tableMetaData.numberOfPages) {
+      endPage = tableMetaData.numberOfPages;
+    }
+
+    // Generate the visible page numbers
+    const visiblePages = [];
+    for (let page = startPage; page <= endPage; page++) {
+      visiblePages.push(page);
+    }
+
+    return visiblePages;
+  };
+
+  const fetchTransactions = async (page) => {
+    try {
+      setLoading(true);
+
+      const transactions = await adminService.getTransactions(
+        selectedType,
+        page,
+        dateOrder
+      );
+
+      setTransactions(transactions.transactions);
+      setTableMetaData({
+        totalRecords: transactions.totalRecords,
+        numberOfPages: transactions.totalPages,
+      });
+      getVisiblePages();
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchWithdraws = async (page) => {
+    try {
+      setLoading(true);
+
+      const transactions = await userWithdrawService.getAllUserWithdraws(
+        page,
+        dateOrder
+      );
+
+      setTransactions(transactions.withdraws);
+      setTableMetaData({
+        totalRecords: transactions.totalRecords,
+        numberOfPages: transactions.totalPages,
+      });
+      getVisiblePages();
+    } catch (error) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    setCurrentPage(1);
+    selectedType === "Withdraw" ? fetchWithdraws(1) : fetchTransactions(1);
+
+    return () => {
+      setTransactions([]);
+      controller.abort();
+    };
+  }, [selectedType]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
+    selectedType === "Withdraw"
+      ? fetchWithdraws(currentPage)
+      : fetchTransactions(currentPage);
+
+    return () => {
+      setTransactions([]);
+      controller.abort();
+    };
+  }, [currentPage, dateOrder]);
+
+  const getRange = () => {
+    const fromRange = 10 * (currentPage - 1) + 1;
+    const toRange = 10 * (currentPage - 1) + 10;
+
+    return `${fromRange} to ${
+      toRange > tableMetaData.totalRecords
+        ? tableMetaData.totalRecords
+        : toRange
+    }`;
+  };
+  const nextPage = () => {
+    if (currentPage < tableMetaData.numberOfPages)
+      setCurrentPage(currentPage + 1);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
   };
 
   return (
     <div>
       <div className="w-fit gap-x-2 bg-white rounded-full flex flex-row justify-between items-center mb-5">
         <button
-          className={`pr-3 pl-3 p-1 rounded-full ${
-            selectedType === "buy" ? " bg-purple text-white" : ""
+          className={`pr-3 pl-3 p-2 rounded-full ${
+            selectedType === "Buy" ? " bg-purple text-white" : ""
           } tracking-wider`}
-          onClick={() => setSelectedType("buy")}
+          onClick={() => setSelectedType("Buy")}
         >
           Buy Transactions
         </button>
         <button
-          className={`pr-3 pl-3 p-1 rounded-full ${
-            selectedType === "sell" ? " bg-purple text-white" : ""
+          className={`pr-3 pl-3 p-2 rounded-full ${
+            selectedType === "Sell" ? " bg-purple text-white" : ""
           } tracking-wider`}
-          onClick={() => setSelectedType("sell")}
+          onClick={() => setSelectedType("Sell")}
         >
           Sell Transactions
         </button>
         <button
-          className={`pr-3 pl-3 p-1 rounded-full ${
-            selectedType === "withdraw" ? " bg-purple text-white" : ""
+          className={`pr-3 pl-3 p-2 rounded-full ${
+            selectedType === "Withdraw" ? " bg-purple text-white" : ""
           } tracking-wider`}
-          onClick={() => setSelectedType("withdraw")}
+          onClick={() => setSelectedType("Withdraw")}
         >
           Withdrawals
         </button>
       </div>
-      <Paper sx={{ width: "100%", overflow: "hidden" }}>
-        <TableContainer sx={{ maxHeight: 440 }}>
-          <Table stickyHeader aria-label="sticky table">
-            <TableHead>
-              <TableRow>
-                {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                  >
-                    {column.label}
-                  </TableCell>
+      {loading || transactions.length <= 0 ? (
+        <div className="flex justify-center items-center h-[60vh]">
+          <Loading otherClasses={"w-10 h-10"} />
+        </div>
+      ) : (
+        <div className="flex flex-col items-center">
+          <div className="w-full overflow-x-auto rounded-xl shadow-lg">
+            <table
+              id="datatable"
+              className="table-auto border-collapse w-full text-left text-gray-700"
+            >
+              <thead className="bg-gray-100 border-b">
+                <tr>
+                  <th className="p-3 font-medium w-[150px]">Transaction ID</th>
+                  <th className="p-3 font-medium w-[150px]">User ID</th>
+                  <th className="p-3 font-medium w-[150px]">
+                    <div className="flex flex-row gap-2">
+                      Date & Time{" "}
+                      <img
+                        src="/images/admin/next_page.svg"
+                        alt="Next Page"
+                        width={18}
+                        className={`${
+                          dateOrder === "desc" ? "rotate-90" : "-rotate-90"
+                        }`}
+                        onClick={() =>
+                          setDateOrder((prev) =>
+                            prev === "desc" ? "asc" : "desc"
+                          )
+                        }
+                      />
+                    </div>
+                  </th>
+                  <th className="p-3 font-medium  w-[150px]">
+                    Opening Balance
+                  </th>
+                  <th className="p-3 font-medium  w-[150px]">
+                    {selectedType === "Withdraw"
+                      ? "Withdrawal amount"
+                      : "Quantity"}
+                  </th>
+                  <th className="p-3 font-medium  w-[150px]">
+                    Closing Balance
+                  </th>
+                  {selectedType !== "Withdraw" && (
+                    <th className="p-3 font-medium  w-[150px]">
+                      Stock Abbreviation
+                    </th>
+                  )}
+                </tr>
+              </thead>
+              <tbody>
+                {transactions.map((row, index) => (
+                  <tr key={index} className={`border-b`}>
+                    <td className={`p-3`}>#{getShortId(row._id)}</td>
+                    <td className={`p-3`}>#{getShortId(row.userId)}</td>
+                    <td className="p-3">
+                      <div className="flex flex-col">
+                        <p>{format(row.date, "dd MMM yyyy")}</p>
+                        <p className="text-sm text-white-300">
+                          {format(row.date, "hh.mm a")}
+                        </p>
+                      </div>
+                    </td>
+                    <td className="p-3">
+                      <Price
+                        price={row.opening_balance.toFixed(2)}
+                        styles="absolute -right-3 -top-1"
+                      />
+                    </td>
+                    <td className="p-3">
+                      {selectedType === "Withdraw"
+                        ? row.withdraw_amount
+                        : row.quantity}
+                    </td>
+                    <td className="p-3">
+                      {" "}
+                      <Price
+                        price={row.closing_balance.toFixed(2)}
+                        styles="absolute -right-3 -top-1"
+                      />
+                    </td>
+                    {row.companyId && (
+                      <td className="p-3">{row.companyId.acronym}</td>
+                    )}
+                  </tr>
                 ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row) => {
-                  return (
-                    <TableRow
-                      hover
-                      role="checkbox"
-                      tabIndex={-1}
-                      key={row.code}
+              </tbody>
+            </table>
+            <div className="flex flex-col sm:flex-row justify-between items-center w-full p-5 pl-3">
+              <div className="text-sm text-gray-600 p-2">
+                Showing {getRange()} of {tableMetaData.totalRecords} entries
+              </div>
+              <ul className="flex space-x-2 mt-2 sm:mt-0">
+                <li>
+                  <button
+                    className={`px-3 py-1 text-sm border shadow-sm rounded ${
+                      currentPage === 1 ? "bg-gray-100" : "bg-white"
+                    }`}
+                    onClick={prevPage}
+                    disabled={currentPage === 1}
+                  >
+                    <img
+                      src="/images/admin/prev_page.svg"
+                      alt="Next Page"
+                      width={18}
+                    />
+                  </button>
+                </li>
+                {/* Pagination Numbers */}
+                {getVisiblePages().map((page) => (
+                  <li key={page}>
+                    <button
+                      onClick={() => goToPage(page)}
+                      className={`px-3 py-1 text-sm shadow-sm ${
+                        page === currentPage
+                          ? "bg-purple text-white"
+                          : "bg-white border"
+                      } rounded`}
                     >
-                      {columns.map((column) => {
-                        const value = row[column.id];
-                        return (
-                          <TableCell key={column.id} align={column.align}>
-                            {column.format && typeof value === "number"
-                              ? column.format(value)
-                              : value}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[10, 25, 100]}
-          component="div"
-          count={rows.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
+                      {page}
+                    </button>
+                  </li>
+                ))}
+                <li>
+                  <button
+                    className={`px-3 py-1 text-sm border shadow-sm rounded ${
+                      currentPage === tableMetaData.numberOfPages
+                        ? "bg-gray-100"
+                        : "bg-white"
+                    }`}
+                    onClick={nextPage}
+                    disabled={currentPage === tableMetaData.numberOfPages}
+                  >
+                    <img
+                      src="/images/admin/next_page.svg"
+                      alt="Next Page"
+                      width={18}
+                    />
+                  </button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

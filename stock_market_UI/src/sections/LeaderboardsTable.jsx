@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { userService } from "../services/user.service";
 import { Stack } from "@mui/material";
 import LeaderboardsCard from "../components/LeaderboardsCard";
+import Loading from "../components/Loading";
 import { useLocation } from "react-router-dom";
 
 const LeaderboardsTable = () => {
@@ -70,11 +71,11 @@ const LeaderboardsTable = () => {
   ];
 
   if (isAdminHome === null || loading) {
-    return <div>Loading...</div>; // Replace with a spinner or skeleton loader
-  }
-
-  if (!leaderboards) {
-    return <div>No data available</div>; // Fallback if no data was fetched
+    return (
+      <div className="flex justify-center items-center h-[60vh]">
+        <Loading otherClasses={"w-10 h-10"} />
+      </div>
+    );
   }
 
   return (

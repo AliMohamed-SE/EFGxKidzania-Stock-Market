@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import User from "../../db/Schemas/UserSchema.js";
 import UserStock from "../../db/Schemas/UserStockSchema.js";
+import UserProfit from "../../db/Schemas/UserProfitSchema.js";
 import logger from "../util/logger.js";
 
 // Monthly Task: Update previousBalance
@@ -48,20 +49,34 @@ const updateDailyStockBalances = async () => {
       const userStocks = await UserStock.find({ userId: user._id }).populate(
         "companyId"
       );
+      const userProfits = await UserProfit.find({
+        userId: user._id,
+      });
 
       logger.debug(`Retrieved ${userStocks.length} user stocks successfully`);
+      logger.debug(`Retrieved ${userProfits.length} user profits successfully`);
+
       const stockBalance = userStocks.reduce(
-        (sum, stock) => sum + stock.companyId.current_price,
+        (sum, stock) => sum + stock.companyId.current_price * stock.quantity,
         0
       );
+      const ProfitMade = userProfits.reduce(
+        (sum, profit) => sum + profit.profit,
+        0
+      );
+
       await User.updateOne(
         { _id: user._id },
-        { $set: { stock_balance: stockBalance } }
+        {
+          $set: { stock_balance: stockBalance, total_profit: ProfitMade },
+        }
       );
     }
-    logger.info(`Successfully updates all users' stock balances`);
+    logger.info(
+      `Successfully updates all users' stock balances & profits made`
+    );
   } catch (err) {
-    logger.error("Failed to update users' stock balance!", {
+    logger.error("Failed to update users' stock balance & profits made!", {
       date: new Date(),
       message: error.message,
       stack: error.stack,

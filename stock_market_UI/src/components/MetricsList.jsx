@@ -81,17 +81,15 @@ const MetricsItem = memo(
             <p className="text-sm">Last 24h</p>
             <div className="flex flex-col gap-1">
               <p className="text-lg font-semibold">
-                {name ? { name }({ acronym }) : "No Company Yet"}
+                {name ? `${name} (${acronym})` : "No Company Yet"}
               </p>
               {(title === "Trending Now" || title === "Highest Return") && (
                 <h1 className="text-3xl flex flex-row gap-4 items-center justify-end">
                   <Price price={price} styles="absolute -right-5 -top-1 w-5" />
-                  {current_return && (
-                    <Return
-                      type={current_return > 0 ? "positive" : "negative"}
-                      number={Math.abs(current_return)}
-                    />
-                  )}
+                  <Return
+                    type={current_return > 0 ? "positive" : "negative"}
+                    number={Math.abs(current_return)}
+                  />
                 </h1>
               )}
               {(title === "Most Traded" || title === "Most Visited") && (

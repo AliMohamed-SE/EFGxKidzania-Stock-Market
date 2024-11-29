@@ -65,7 +65,7 @@ const LeaderboardsCard = ({ title, image, description, list }) => {
                   style={{ flexGrow: 1 }}
                 >
                   <img
-                    src={`${backendUrl}/images/avatars/${item.avatar}.svg`}
+                    src={`/images/avatars/${item.avatar}.svg`}
                     width={48}
                     height={48}
                     className="rounded-full"

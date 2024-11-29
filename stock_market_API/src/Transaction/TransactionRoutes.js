@@ -4,12 +4,8 @@ import express from "express";
 const TransactionRoutes = (transactionController) => {
   const router = express.Router();
 
-  router.get("/get-buy", (req, res) =>
-    transactionController.getBuyTransactions(req, res)
-  );
-
-  router.get("/get-sell", (req, res) =>
-    transactionController.getSellTransactions(req, res)
+  router.get("/", (req, res) =>
+    transactionController.getTransactions(req, res)
   );
 
   return router;

@@ -15,9 +15,11 @@ const getOneUserWithdraws = async (id) => {
   }
 };
 
-const getAllUserWithdraws = async () => {
+const getAllUserWithdraws = async (page, order) => {
   try {
-    const response = await apiClient.get(`userWithdraw/get-all`);
+    const response = await apiClient.get(
+      `userWithdraw/get-all?page=${page}&order=${order}`
+    );
 
     const userWithdraws = response.data;
 

@@ -120,6 +120,39 @@ class UserService {
       throw new Error("Failed to fetch avatars.");
     }
   };
+
+  getAllUsers = async (searchQuery, page, correlationId) => {
+    try {
+      const users = await this.userRepo.getAllUsers(
+        searchQuery,
+        page,
+        correlationId
+      );
+
+      return users;
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  updateBalance = async (balance, userId, correlationId) => {
+    try {
+      if (!userId) {
+        throw new Error("Invalid userId: cannot be null or undefined");
+      }
+
+      const newBalance = Number(balance);
+      const user = await this.userRepo.updateBalance(
+        newBalance,
+        userId,
+        correlationId
+      );
+
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 export default UserService;

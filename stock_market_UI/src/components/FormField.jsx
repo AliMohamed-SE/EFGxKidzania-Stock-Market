@@ -40,6 +40,7 @@ const FormField = React.forwardRef(
         <OutlinedInput
           sx={{
             borderRadius: "100px",
+            height: "100%",
             backgroundColor: error || success ? "#FFF6F6" : "#F8F9FA",
             border: success ? "2px solid #10BF0F" : "",
             "& .MuiOutlinedInput-notchedOutline": {

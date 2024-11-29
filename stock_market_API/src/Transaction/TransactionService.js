@@ -1,31 +1,33 @@
-class UserWithdrawService {
+class TransactionService {
   constructor({ transactionRepo, logger }) {
     this.transactionRepo = transactionRepo;
     this.logger = logger;
   }
 
-  // Get all user withdrawals
-  getBuyTransactions = async (correlationId) => {
+  getTransactions = async (type, page, order, correlationId) => {
     this.logger.info(
-      "getBuyTransactions - Service layer: Fetching all user buy transactions",
+      "getTransactions - Service layer: Fetching all user transactions",
       {
         correlationId,
+        type,
+        page,
+        order,
       }
     );
 
     try {
-      const buyTransactions = await this.transactionRepo.getBuyTransactions(
+      const transactions = await this.transactionRepo.getTransactions(
         page,
         order,
-        "Buy",
+        type,
         correlationId
       );
 
-      return buyTransactions;
+      return transactions;
     } catch (error) {
       throw error;
     }
   };
 }
 
-export default UserWithdrawService;
+export default TransactionService;

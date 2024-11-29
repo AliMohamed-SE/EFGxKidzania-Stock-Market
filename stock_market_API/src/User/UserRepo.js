@@ -200,6 +200,73 @@ class UserRepo {
       throw error;
     }
   }
+
+  async getAllUsers(searchQuery, page, correlationId) {
+    try {
+      this.logger.info("Fetching all users", {
+        correlationId,
+        searchQuery,
+        page,
+      });
+      const limit = 8;
+      const skip = (page - 1) * limit;
+
+      // Build the search filter (you can customize this to search across different fields)
+      const searchFilter = searchQuery
+        ? {
+            $or: [
+              {
+                $expr: {
+                  $regexMatch: {
+                    input: { $toString: "$_id" },
+                    regex: `^${searchQuery}`,
+                    options: "i",
+                  },
+                },
+              },
+              { username: { $regex: searchQuery, $options: "i" } },
+              { first_name: { $regex: searchQuery, $options: "i" } },
+              { last_name: { $regex: searchQuery, $options: "i" } },
+            ],
+          }
+        : {};
+
+      const users = await User.find(searchFilter)
+        .skip(skip)
+        .limit(limit)
+        .exec();
+
+      const totalUsers = await User.countDocuments(searchFilter).exec();
+
+      return {
+        users,
+        totalUsers,
+        totalPages: Math.ceil(totalUsers / limit),
+      };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateBalance(balance, userId, correlationId) {
+    try {
+      this.logger.info("Updating a User's wallet balance", {
+        correlationId,
+        balance,
+        userId,
+      });
+
+      const user = await User.findOneAndUpdate(
+        { _id: userId },
+        { $inc: { wallet_balance: balance } },
+        { new: true }
+      );
+
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default UserRepo;

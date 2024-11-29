@@ -54,33 +54,34 @@ class TransactionRepo {
 
   async getTransactions(page, order, type, correlationId) {
     try {
+      const pageNumber = page ? page : 1;
       const pageSize = 10; // Number of records per page
-      const skip = (page - 1) * pageSize; // Calculate the number of records to skip
+      const skip = (pageNumber - 1) * pageSize; // Calculate the number of records to skip
       const sortOrder = order === "asc" ? 1 : -1; // Determine the sort order (ascending or descending)
 
       this.logger.info("getBuyTransactions - Fetching buy transactions", {
         correlationId,
-        page,
+        pageNumber,
         order,
       });
 
       // Get the total number of records in the collection
       const totalRecords = await Transaction.countDocuments({ type: type });
 
+      // Calculate the total number of pages
+      const totalPages = Math.ceil(totalRecords / pageSize);
+
       // Fetch the paginated and sorted records
-      const buyTransactions = await Transaction.find({ type: type })
+      const transactions = await Transaction.find({ type: type })
         .sort({ date: sortOrder }) // Sort by the `date` field
         .skip(skip) // Skip records for pagination
-        .limit(pageSize); // Limit the number of records to the page size
-
-      // Calculate the range of records being displayed
-      const start = skip + 1;
-      const end = Math.min(skip + pageSize, totalRecords);
+        .limit(pageSize) // Limit the number of records to the page size
+        .populate("companyId", "acronym"); // Populate only the `acronym` field of `companyId`
 
       return {
-        buyTransactions, // The fetched transactions
+        transactions, // The fetched transactions
         totalRecords, // Total number of records
-        range: `${start}-${end}`, // Range being displayed (e.g., "21-30")
+        totalPages, // Total number of available pages
       };
     } catch (error) {
       this.logger.error("Error fetching buy transactions", {

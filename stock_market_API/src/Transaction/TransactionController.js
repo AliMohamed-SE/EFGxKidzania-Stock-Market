@@ -1,39 +1,41 @@
 import { v4 as uuidv4 } from "uuid";
 
-class UserWithdrawController {
+class TransactionController {
   constructor({ transactionService, logger }) {
     this.transactionService = transactionService;
     this.logger = logger;
   }
 
-  getBuyTransactions = async (req, res) => {
+  getTransactions = async (req, res) => {
     const correlationId = req.headers["x-correlation-id"] || uuidv4();
-    const { page, order } = req.query;
+    const { type, page, order } = req.query;
 
-    this.logger.info("getBuyTransactions - Request received", {
+    this.logger.info("getTransactions - Request received", {
       correlationId,
-      action: "getBuyTransactions",
+      action: "getTransactions",
     });
 
     try {
-      const buyTransactions = await this.transactionService.getBuyTransactions(
+      const buyTransactions = await this.transactionService.getTransactions(
+        type,
         page,
         order,
         correlationId
       );
       this.logger.info(
-        "getBuyTransactions - Successfully fetched all user buy transactions",
+        "getTransactions - Successfully fetched all usertransactions",
         {
           correlationId,
           transactionsCount: buyTransactions.length,
           page,
           order,
+          type,
         }
       );
       res.status(200).json(buyTransactions);
     } catch (error) {
       this.logger.error(
-        "getBuyTransactions - Error fetching all user buy transactions",
+        "getTransactions - Error fetching all user transactions",
         {
           correlationId,
           error: error.message,
@@ -45,4 +47,4 @@ class UserWithdrawController {
   };
 }
 
-export default UserWithdrawController;
+export default TransactionController;

@@ -37,6 +37,7 @@ class UserWithdrawController {
 
   getAllUserWithdraws = async (req, res) => {
     const correlationId = req.headers["x-correlation-id"] || uuidv4();
+    const { page, order } = req.query;
 
     this.logger.info("getAllUserWithdraws - Request received", {
       correlationId,
@@ -45,13 +46,14 @@ class UserWithdrawController {
 
     try {
       const userWithdraws = await this.userWithdrawService.getAllUserWithdraws(
+        page,
+        order,
         correlationId
       );
       this.logger.info(
         "getAllUserWithdraws - Successfully fetched all user withdrawals",
         {
           correlationId,
-          withdrawalsCount: userWithdraws.length,
         }
       );
       res.status(200).json(userWithdraws);

@@ -12,6 +12,21 @@ const login = async (email, password) => {
   }
 };
 
+const getTransactions = async (type, page, order) => {
+  try {
+    const response = await apiClient.get(
+      `transactions?type=${type}&page=${page}&order=${order}`
+    );
+
+    const transactionData = response.data;
+
+    return transactionData;
+  } catch (error) {
+    throw new Error("Failed to retrieve transactions");
+  }
+};
+
 export const adminService = {
   login,
+  getTransactions,
 };

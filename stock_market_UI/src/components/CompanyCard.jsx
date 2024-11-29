@@ -40,7 +40,7 @@ const CompanyCard = memo(({ company, handleOpen }) => {
             </span>
           </div>
 
-          {company.current_return > 0 ? (
+          {company.current_return >= 0 ? (
             <img src="/images/positive_return.svg" alt="positive return" />
           ) : (
             <img src="/images/negative_return.svg" alt="negative return" />
@@ -63,9 +63,9 @@ const CompanyCard = memo(({ company, handleOpen }) => {
           </div>
           <div className="flex flex-row gap-4 justify-center items-center">
             <Price
-              price={`${company.current_change < 0 ? "" : "+"}${
-                company.current_change
-              }`}
+              price={`${
+                company.current_change < 0 ? "" : "+"
+              }${company.current_change.toFixed(2)}`}
               styles="absolute -right-3.5 top-0 w-3"
               textStyles={`${
                 company.current_change < 0 ? "text-red-600" : "text-green-500"

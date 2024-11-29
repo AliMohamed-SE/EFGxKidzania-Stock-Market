@@ -2,6 +2,7 @@ import apiClient from "../apis/apiClient";
 import UserEntity from "../entities/userEntity";
 
 const login = async (username, password) => {
+  console.log(apiClient.baseURL);
   try {
     const response = await apiClient.post("users/login", {
       username,
@@ -62,10 +63,37 @@ const fetchLeaderboards = async (limit) => {
   }
 };
 
+const getUsers = async (page, searchQuery) => {
+  try {
+    const response = await apiClient.get(
+      `users/getall-users?page=${page}&searchQuery=${searchQuery}`
+    );
+
+    return response.data;
+  } catch (error) {
+    throw new Error("An unexpected error occurred");
+  }
+};
+
+const updateBalance = async (balance, userId) => {
+  try {
+    const response = await apiClient.put(`users/update-balance`, {
+      balance,
+      userId,
+    });
+
+    return response.data;
+  } catch (error) {
+    throw new Error("An unexpected error occurred");
+  }
+};
+
 export const userService = {
   login,
   register,
   isUsernameAvailable,
   fetchUser,
   fetchLeaderboards,
+  getUsers,
+  updateBalance,
 };

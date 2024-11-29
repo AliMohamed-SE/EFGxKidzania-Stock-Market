@@ -10,11 +10,6 @@ import SuccessfulWithdrawModal from "../components/SuccessfulWithdrawModal";
 
 const columns = [
   {
-    width: 200,
-    label: "Withdraw ID",
-    dataKey: "_id",
-  },
-  {
     width: 130,
     label: "Cash Balance",
     dataKey: "opening_balance",
@@ -34,6 +29,11 @@ const columns = [
     width: 200,
     label: "Time",
     dataKey: "date",
+  },
+  {
+    width: 100,
+    label: "Withdraw ID",
+    dataKey: "_id",
   },
 ];
 

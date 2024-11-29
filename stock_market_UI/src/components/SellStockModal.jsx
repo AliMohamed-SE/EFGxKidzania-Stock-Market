@@ -7,21 +7,23 @@ import Price from "./Price";
 import { useSpring, animated } from "@react-spring/web";
 
 import SellStockWindow from "./SellStockWindow";
+import { useAuth } from "../providers/AuthProvider";
 
-const CompanyCard = memo(({ stock, handleClick, size, selected }) => {
+const CompanyCard = memo(({ stock, handleClick, selected }) => {
+  const { backendUrl } = useAuth();
   return (
-    <Grid2
+    <div
       key={stock.id}
-      size={size}
-      className={`bg-white rounded-2xl p-3 border ${
-        selected && "border-green-500 border-[2px]"
+      className={`bg-white rounded-2xl p-3 border max-h-[300px] ${
+        selected ? "border-green-500 border-[2px]" : "border-[2px]"
       }`}
+      style={{ boxSizing: "border-box" }}
     >
       <Stack spacing={2}>
         <div className="flex flex-row justify-between text-sm font-semibold">
           <div className="flex flex-row gap-3 justify-center items-center h-12">
             <img
-              src={`/images/logos/${stock.logo}.svg`}
+              src={`${backendUrl}/images/logos/${stock.logo}`}
               alt="Logo"
               width="40px"
               height="40px"
@@ -68,7 +70,7 @@ const CompanyCard = memo(({ stock, handleClick, size, selected }) => {
           </button>
         </div>
       </Stack>
-    </Grid2>
+    </div>
   );
 });
 
@@ -132,7 +134,6 @@ const SellStockModal = memo(({ open, handleClose, userStocksDetails }) => {
                   key={stock.id}
                   stock={stock}
                   handleClick={() => setSellingCompany(stock)}
-                  size={sellingCompany ? 6 : 4}
                   selected={
                     sellingCompany && sellingCompany.id === stock.id
                       ? true

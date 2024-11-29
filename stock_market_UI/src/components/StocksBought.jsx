@@ -105,6 +105,7 @@ const StocksBought = ({ userStocks, setNumberOfAssets }) => {
         const id = stock.companyId._id;
         const companyName = stock.companyId.name;
         const companyLogo = stock.companyId.logo;
+        const companyAcronym = stock.companyId.acronym;
         const stockValue = stock.quantity * stock.companyId.current_price;
         const spent = stock.quantity * stock.buy_price;
         totalStockValue += stockValue;
@@ -118,6 +119,7 @@ const StocksBought = ({ userStocks, setNumberOfAssets }) => {
           companySpends[companyName] = {
             id: id,
             logo: companyLogo,
+            acronym: companyAcronym,
             returns: stock.companyId.current_return,
             visitors: stock.companyId.current_visitors,
             price: stock.companyId.current_price,
@@ -139,6 +141,7 @@ const StocksBought = ({ userStocks, setNumberOfAssets }) => {
           id: data.id,
           company: companyName,
           logo: data.logo,
+          acronym: data.acronym,
           returns: data.returns,
           visitors: data.visitors,
           price: data.price,
