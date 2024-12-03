@@ -102,7 +102,7 @@ const BalanceBreakdown = ({ withdrawHandle }) => {
           <h6 className="text-[#31CFCB]">Available Cash Balance</h6>
           <div className="flex items-start gap-1 w-full relative">
             <p className="text-white text-2xl">
-              {user.wallet_balance.toFixed(2)}
+              {user.wallet_balance.toLocaleString()}
             </p>
             <img
               src="/images/KidZosicon2.svg"
@@ -115,7 +115,7 @@ const BalanceBreakdown = ({ withdrawHandle }) => {
           <h6 className="text-[#31CFCB]">Invested Amount</h6>
           <div className="flex items-start gap-1 w-full relative">
             <p className="text-white text-2xl">
-              {user.total_invested_amount.toFixed(2)}
+              {user.total_invested_amount.toLocaleString()}
             </p>
             <img
               src="/images/KidZosicon2.svg"
@@ -127,7 +127,9 @@ const BalanceBreakdown = ({ withdrawHandle }) => {
         <div className="border-r-white border-r pl-3 pr-3">
           <h6 className="text-[#31CFCB]">Profit Made</h6>
           <div className="flex items-start gap-1 w-full relative">
-            <p className="text-white text-2xl">{totalProfit}</p>
+            <p className="text-white text-2xl">
+              {totalProfit.toLocaleString()}
+            </p>
             <img
               src="/images/KidZosicon2.svg"
               alt="KidZos Icon"
@@ -139,7 +141,7 @@ const BalanceBreakdown = ({ withdrawHandle }) => {
           <h6 className="text-[#31CFCB]">Value of Stocks Bought</h6>
           <div className="flex items-start gap-1 w-full relative">
             <p className="text-white text-2xl">
-              {user.stock_balance.toFixed(2)}
+              {user.stock_balance.toLocaleString()}
             </p>
             <img
               src="/images/KidZosicon2.svg"

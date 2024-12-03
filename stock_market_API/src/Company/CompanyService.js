@@ -222,7 +222,7 @@ class CompanyService {
               filter: { establishment_type: establishment }, // Match the establishment in the database
               update: {
                 $set: {
-                  current_price: currentPrice,
+                  current_price: parseFloat(currentPrice.toFixed(2)),
                   current_change: currentChange,
                   current_visitors: currentVisitors,
                   current_return: parseFloat(currentReturn.toFixed(2)), // Ensure numeric value with 2 decimals

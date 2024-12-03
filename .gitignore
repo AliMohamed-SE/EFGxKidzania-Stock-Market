@@ -34,9 +34,16 @@ coverage
 # IDE files
 .vscode/
 .idea/
+.atom/
+*.sublime-workspace
+*.sublime-project
 
 # Mac OS files
 .DS_Store
+
+# Windows image file caches
+Thumbs.db
+ehthumbs.db
 
 # Misc
 *.bak
@@ -45,3 +52,12 @@ Thumbs.db
 
 # Service workers
 public/service-worker.js
+
+# Vite cache (if using Vite)
+.vite/
+
+# Snowpack cache (if using Snowpack)
+snowpack/
+
+# Jest coverage output
+coverage/

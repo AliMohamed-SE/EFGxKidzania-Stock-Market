@@ -187,7 +187,6 @@ class CompanyRepo {
 
   updateVisitors = async (bulkOperations, correlationId) => {
     try {
-      // Execute the bulk operations
       if (bulkOperations.length > 0) {
         this.logger.info("Executing bulk database update for visitors", {
           correlationId,

@@ -42,7 +42,7 @@ const AdminLogin = () => {
       await setAdmin(adminEntity);
       sessionStorage.setItem("admintoken", JSON.stringify(adminEntity));
 
-      navigate("/admin/Home");
+      navigate("/admin/home");
     } catch (error) {
       setLoginError(error.message);
     } finally {

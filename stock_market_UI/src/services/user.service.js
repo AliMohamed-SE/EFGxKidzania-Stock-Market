@@ -2,7 +2,6 @@ import apiClient from "../apis/apiClient";
 import UserEntity from "../entities/userEntity";
 
 const login = async (username, password) => {
-  console.log(apiClient.baseURL);
   try {
     const response = await apiClient.post("users/login", {
       username,
