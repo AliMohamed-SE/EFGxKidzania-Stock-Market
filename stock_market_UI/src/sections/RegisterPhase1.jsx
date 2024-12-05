@@ -63,7 +63,7 @@ const RegisterPhase1 = ({ data, updateData, onNext }) => {
             alt="Login"
           />
         </div>
-        <div className="flex flex-col w-full md:w-1/2">
+        <div className="flex flex-col w-full md:w-1/2 justify-center">
           <div className="bg-white flex flex-col justify-between rounded-xl m-5 p-5 mt-0 min-h-[633px]">
             <div className="flex flex-row justify-center items-center">
               <img src="/images/main_logos.jpg" />
@@ -151,7 +151,7 @@ const RegisterPhase1 = ({ data, updateData, onNext }) => {
             </div>
           </div>
 
-          <div className="bg-white flex flex-row items-center  m-5 p-5 mt-4 px-10 h-[122] rounded-xl">
+          {/* <div className="bg-white flex flex-row items-center  m-5 p-5 mt-4 px-10 h-[122] rounded-xl">
             <img src="/images/profilelist.svg" />
             <div className="mr-10 ml-6">
               <h6 className="text-[14px]">Join 100k+ happy users!</h6>
@@ -167,7 +167,7 @@ const RegisterPhase1 = ({ data, updateData, onNext }) => {
             >
               <img src="/images/rightline.svg" className="w-10" />
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

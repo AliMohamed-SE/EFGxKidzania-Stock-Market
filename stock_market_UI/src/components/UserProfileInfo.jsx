@@ -26,7 +26,7 @@ const UserProfileInfo = ({ successRate, numberOfAssets }) => {
           </p>
         </div>
       </div>
-      {/* 2nd Section */}
+      {/* 2nd Section
       <div className="flex flex-col items-center justify-between w-[250px] p-1 border-r-[1px] border-[#120804] h-[300px] gap-6">
         <div className="flex flex-row">
           <img src="/images/total_balance.svg" alt="Total Balance" />
@@ -64,7 +64,7 @@ const UserProfileInfo = ({ successRate, numberOfAssets }) => {
           </div>
         </div>
       </div>
-      {/* 3rd Section */}
+      3rd Section
       <div className="flex flex-col items-center justify-center w-[400px] h-[300px] px-5 py-2">
         <div className="w-full bg-[#F7F7F7] h-full rounded-2xl pt-5 pl-2 text-lg">
           <Stack spacing={2}>
@@ -122,6 +122,17 @@ const UserProfileInfo = ({ successRate, numberOfAssets }) => {
               </div>
             </div>
           </Stack>
+        </div>
+      </div> */}
+      <div className="flex flex-col justify-center items-center w-[650px] p-5">
+        <div className="w-full -translate-y-8">
+          <h2 className="text-2xl font-semibold">Your Achieved Badges</h2>
+        </div>
+        <div className="flex flex-col justify-start items-center">
+          <img src="/images/coming-soon-portfolio.svg" />
+          <p className="text-sm text-white-200">
+            You have not engaged in enough trading activity to achieve a badge.
+          </p>
         </div>
       </div>
     </Stack>

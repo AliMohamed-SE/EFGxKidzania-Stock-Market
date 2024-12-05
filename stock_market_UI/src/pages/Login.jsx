@@ -126,7 +126,7 @@ const Login = () => {
               </p>
             </div>
           </div>
-          <div className="bg-white flex flex-row items-center md:p-5 m-5 md:px-10 px-4 h-[122px] mt-4 rounded-xl">
+          {/* <div className="bg-white flex flex-row items-center md:p-5 m-5 md:px-10 px-4 h-[122px] mt-4 rounded-xl">
             <img src="/images/profilelist.svg" className="max-md:w-20" />
             <div className="md:mr-10 mr-2 ml-6">
               <h6 className="md:text-[16px] text-xs pb-2">
@@ -144,7 +144,7 @@ const Login = () => {
             >
               <img src="/images/rightline.svg" className="w-10" />
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
