@@ -10,6 +10,7 @@ const Navbar = () => {
   const [logoutClicked, setLogoutClicked] = useState(false);
 
   const logoutHandle = async () => {
+    console.log("here");
     sessionStorage.removeItem("token");
     await setUser(null);
     navigate("/login");
@@ -57,7 +58,7 @@ const Navbar = () => {
       )}
       {logoutClicked && (
         <button
-          className="flex flex-row justify-start items-center gap-3 absolute right-8 top-22 w-[246px] h-[67px] bg-white rounded-xl p-5 shadow-lg"
+          className="flex flex-row justify-start items-center gap-3 absolute right-8 top-22 w-[246px] h-[67px] bg-white rounded-xl p-5 shadow-lg z-1"
           onClick={logoutHandle}
         >
           <img src="/images/logout.svg" alt="Logout" />

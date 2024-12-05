@@ -31,7 +31,7 @@ const RegisterPhase2 = ({ data, updateData, onNext, onBack }) => {
         checkUsernameUnique();
       }
       setTyping(false);
-    }, 1000);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [data.username]);

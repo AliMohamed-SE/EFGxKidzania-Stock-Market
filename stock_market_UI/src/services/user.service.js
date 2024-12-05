@@ -34,7 +34,7 @@ const register = async (registerData) => {
 
 const isUsernameAvailable = async (username) => {
   try {
-    await apiClient.get(`users/${username}`);
+    await apiClient.get(`users/get-username/${username}`);
 
     return true;
   } catch (error) {

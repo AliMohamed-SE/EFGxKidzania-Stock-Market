@@ -12,7 +12,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const token = sessionStorage.getItem("token");
     const admintoken = sessionStorage.getItem("admintoken");
-    setBackendUrl("http://192.168.1.12:5000");
+    setBackendUrl(import.meta.env.VITE_REACT_APP_BACKEND_URL);
 
     if (token) {
       const user = JSON.parse(token);

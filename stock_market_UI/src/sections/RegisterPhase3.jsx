@@ -33,7 +33,7 @@ const RegisterPhase3 = ({ data, updateData, onNext, onBack }) => {
         checkPasswordAcceptable();
       }
       setTyping(false);
-    }, 1000);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [data.password]);

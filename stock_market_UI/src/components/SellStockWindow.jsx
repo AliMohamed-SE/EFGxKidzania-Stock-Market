@@ -55,7 +55,7 @@ const SellStockWindow = ({ company }) => {
       <div className="flex flex-col gap-1">
         <h3 className="flex flex-row gap-2 items-center justify-start text-[27px] font-bold">
           {" "}
-          Buy {company.acronym}{" "}
+          Sell {company.acronym}{" "}
           <img
             src={`${backendUrl}/images/logos/${company.logo}`}
             width={30}
