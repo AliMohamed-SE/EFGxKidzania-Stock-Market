@@ -44,8 +44,7 @@ const Home = () => {
         sx={{
           width: "100%",
           padding: 4,
-          paddingTop: 6,
-          flexGrow: 1,
+          paddingTop: 3,
         }}
       >
         <TabContext value={view}>
@@ -70,7 +69,7 @@ const Home = () => {
                   label={label}
                   value={label}
                   sx={{
-                    fontSize: "24px",
+                    fontSize: "20px",
                     color: "#9AA0A6",
                     fontWeight: "normal",
                     textTransform: "none", // Prevents automatic capitalization
@@ -90,11 +89,11 @@ const Home = () => {
           <TabPanel value="My Portfolio" sx={{ padding: 0 }}>
             <MyPortfolio withdrawHandle={(e) => handleChange(e, "Withdraw")} />
           </TabPanel>
-          <TabPanel value="Withdraw" sx={{ padding: 0 }}>
+          <TabPanel value="Withdraw" sx={{ padding: 0, paddingTop: 2 }}>
             <WithdrawSection navigationHandle={handleChange} />
           </TabPanel>
-          <TabPanel value="Leaderboard" sx={{ padding: 0 }}>
-            <LeaderboardsTable styles="" />
+          <TabPanel value="Leaderboard" sx={{ padding: 0, paddingTop: 2 }}>
+            <LeaderboardsTable />
           </TabPanel>
         </TabContext>
       </Box>

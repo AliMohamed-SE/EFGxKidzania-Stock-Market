@@ -40,8 +40,8 @@ const columns = [
 // Custom Styled Slider
 const CustomSlider = styled(Slider)({
   color: "#6143F0", // Purple color for filled area
-  width: "920px",
-  height: "35px", // Height of the slider track
+  width: "100%",
+  height: "95%", // Height of the slider track
   "& .MuiSlider-track": {
     backgroundColor: "#6143F0", // Purple color for the filled track
   },
@@ -66,7 +66,6 @@ const WithdrawSection = ({ navigationHandle }) => {
   const [withdrawLoading, setWithdrawLoading] = useState(false);
   const [withdrawQuantity, setWithdrawQuantity] = useState(0);
   const [withdrawList, setWithdrawList] = useState([]);
-  const [searchText, setSearchText] = useState("");
 
   const [open, setOpen] = useState(false);
   const handleClose = () => setOpen(false);
@@ -121,37 +120,39 @@ const WithdrawSection = ({ navigationHandle }) => {
   }, []);
 
   return (
-    <Stack spacing={3} className="p-5">
-      <Stack direction={"row"} spacing={3}>
-        <div className="w-[344px] h-[360px] rounded-2xl bg-white p-4 flex flex-col gap-5">
+    <Stack spacing={3}>
+      <Stack direction={"row"} spacing={3} className="w-full">
+        <div className="rounded-2xl bg-white p-4 flex flex-col gap-5 w-[25%]">
           <div className="flex flex-row gap-3 justify-start items-center">
             <img
               src="/images/available_withdraw.svg"
               alt="Available to Withdraw"
+              width={35}
+              height={35}
             />
-            <h6 className="font-semibold text-[22px]">Available to withdraw</h6>
+            <h6 className="font-semibold text-lg">Available to withdraw</h6>
           </div>
           <div className="flex justify-center items-center">
             <Price
               price={Math.floor(user.wallet_balance)}
-              styles={"absolute top-1 -right-8 w-8"}
-              textStyles={"text-[58px]"}
+              styles={"absolute -top-3 -right-8 w-8"}
+              textStyles={"text-5xl"}
             />
           </div>
-          <div className="flex justify-center -translate-y-8">
-            <img src="/images/money.svg" alt="Money" className="w-[200px]" />
+          <div className="flex justify-center h-[200px]">
+            <img src="/images/money.svg" alt="Money" width={200} height={200} />
           </div>
         </div>
-        <div className="w-[1008px] h-[360px] rounded-2xl bg-white p-5">
+        <div className="rounded-2xl bg-white p-8 pl-10 w-[75%] space-y-4">
           <div className="flex justify-center items-center">
             <Price
               price={withdrawQuantity}
-              textStyles={"text-[92px]"}
-              styles={"absolute top-2 -right-14 w-14"}
+              textStyles={"text-7xl"}
+              styles={"absolute -top-2 -right-14 w-14"}
             />
           </div>
-          <div className="flex flex-col justify-center items-center">
-            <p className="text-white-300 text-[17px] p-4 pt-5 tracking-wider">
+          <div className="flex flex-col justify-center items-center gap-3">
+            <p className="text-white-300 text-sm p-4 pt-5 tracking-wider">
               Move the Below slider to select a specific amount you want to
               withdraw
             </p>
@@ -159,10 +160,10 @@ const WithdrawSection = ({ navigationHandle }) => {
               value={withdrawQuantity}
               onChange={handleChange}
               max={Math.floor(user.wallet_balance)}
-              valueLabelDisplay="on" // Show the current value
+              valueLabelDisplay="on"
             />
           </div>
-          <div className="flex items-center justify-end pr-5">
+          <div className="flex items-center justify-end">
             <button
               className="flex items-center justify-center flex-row gap-2 bg-purple w-[206px] h-[51px] rounded-full text-white text-[18px] font-extralight tracking-wider"
               onClick={handleWithdraw}
