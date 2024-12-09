@@ -171,7 +171,7 @@ const BuyStockWindow = ({ company }) => {
           alt="Trade Between"
           width={42}
           height={42}
-          className="absolute left-[45%] top-[38%]"
+          className="absolute left-[45%] top-[40%]"
         />
         {error.length > 0 && (
           <p className="text-red-600 text-center">{error}</p>
@@ -181,7 +181,7 @@ const BuyStockWindow = ({ company }) => {
         )}
       </div>
       <div
-        className={`${
+        className={`text-xs ${
           error.length > 0 || success.length > 0 ? "pt-0" : "pt-8"
         }`}
       >

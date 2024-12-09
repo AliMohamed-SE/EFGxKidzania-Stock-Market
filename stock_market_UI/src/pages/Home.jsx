@@ -92,7 +92,7 @@ const Home = () => {
           >
             <MyPortfolio withdrawHandle={(e) => handleChange(e, "Withdraw")} />
           </TabPanel>
-          <TabPanel value="Withdraw" sx={{ padding: 0, paddingTop: 2 }}>
+          <TabPanel value="Withdraw" sx={{ padding: 0, paddingTop: 4 }}>
             <WithdrawSection navigationHandle={handleChange} />
           </TabPanel>
           <TabPanel value="Leaderboard" sx={{ padding: 0, paddingTop: 2 }}>
