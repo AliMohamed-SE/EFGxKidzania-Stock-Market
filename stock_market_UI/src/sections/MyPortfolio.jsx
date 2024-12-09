@@ -54,7 +54,7 @@ const MyPortfolio = ({ withdrawHandle }) => {
           />
         </div>
 
-        <div className="w-full h-[45%] bg-white rounded-2xl">
+        <div className="w-full h-[44%] bg-white rounded-2xl">
           <UserProfileInfo
             successRate={successRate}
             numberOfAssets={numberOfAssets}

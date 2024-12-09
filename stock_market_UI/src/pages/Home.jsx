@@ -88,7 +88,7 @@ const Home = () => {
           </TabPanel>
           <TabPanel
             value="My Portfolio"
-            sx={{ padding: 0, paddingTop: 2, height: "77vh" }}
+            sx={{ padding: 0, paddingTop: 2, height: "75vh" }}
           >
             <MyPortfolio withdrawHandle={(e) => handleChange(e, "Withdraw")} />
           </TabPanel>

@@ -60,7 +60,7 @@ const BalanceBreakdown = ({ withdrawHandle }) => {
   return (
     <div className="relative p-4">
       <Stack direction={"column"}>
-        <h1 className="text-[37px] text-white font-me">Total Balance</h1>
+        <h1 className="text-[37px] text-white">Total Balance</h1>
         <div className="flex flex-row items-center gap-1">
           <p className="text-white text-[35px]">
             {user.getTotalBalance().toFixed(2)}

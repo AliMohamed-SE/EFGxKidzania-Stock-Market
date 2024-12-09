@@ -14,7 +14,7 @@ const Register = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [registerationPhase, setRegisterationPhase] = useState(1);
+  const [registerationPhase, setRegisterationPhase] = useState(4);
   const [registerData, setRegisterData] = useState({
     first_name: "",
     last_name: "",
