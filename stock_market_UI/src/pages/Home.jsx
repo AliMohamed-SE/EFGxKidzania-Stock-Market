@@ -86,7 +86,10 @@ const Home = () => {
           <TabPanel value="Market Overview" sx={{ padding: 0 }}>
             <MarketOverview balance={user.wallet_balance} />
           </TabPanel>
-          <TabPanel value="My Portfolio" sx={{ padding: 0 }}>
+          <TabPanel
+            value="My Portfolio"
+            sx={{ padding: 0, paddingTop: 2, height: "77vh" }}
+          >
             <MyPortfolio withdrawHandle={(e) => handleChange(e, "Withdraw")} />
           </TabPanel>
           <TabPanel value="Withdraw" sx={{ padding: 0, paddingTop: 2 }}>

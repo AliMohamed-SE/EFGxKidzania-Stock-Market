@@ -9,10 +9,10 @@ import Return from "./Return";
 const Images = ({ image1, image2, image3, image4 }) => {
   const { backendUrl } = useAuth();
   return (
-    <div className="pt-5 flex justify-center items-center relative w-[90%]">
+    <div className="flex justify-center items-center relative w-[150px]">
       {/* main Image (Highest Percentage) */}
       <div
-        className="bg-white w-[120px] h-[120px] rounded-full flex justify-center items-center overflow-hidden p-2 z-3"
+        className="bg-white w-[87px] h-[87px] rounded-full flex justify-center items-center overflow-hidden p-2 z-3"
         style={{
           boxShadow: "0px 2px 20px rgba(0, 0, 0, 0.1)",
         }}
@@ -26,7 +26,7 @@ const Images = ({ image1, image2, image3, image4 }) => {
       {/* 2nd Image (2nd Highest Percentage) */}
       {image2 && (
         <div
-          className="bg-white w-[90px] h-[90px] rounded-full flex justify-center items-center overflow-hidden p-2 absolute right-8 z-2"
+          className="bg-white w-[74px] h-[74px] rounded-full flex justify-center items-center overflow-hidden p-2 absolute -right-7 z-2"
           style={{
             boxShadow: "0px 2px 20px rgba(0, 0, 0, 0.1)",
           }}
@@ -40,7 +40,7 @@ const Images = ({ image1, image2, image3, image4 }) => {
       {/* 3rd Image (3rd Highest Percentage) */}
       {image3 && (
         <div
-          className="bg-white w-[70px] h-[70px] rounded-full flex justify-center items-center overflow-hidden p-2 absolute -bottom-8 right-20 z-1"
+          className="bg-white w-[57px] h-[57px] rounded-full flex justify-center items-center overflow-hidden p-2 absolute -bottom-9 right-3 z-1"
           style={{
             boxShadow: "0px 2px 20px rgba(0, 0, 0, 0.1)",
           }}
@@ -54,7 +54,7 @@ const Images = ({ image1, image2, image3, image4 }) => {
       {/* 4th Image (4th Highest Percentage) */}
       {image4 && (
         <div
-          className="bg-white w-[70px] h-[70px] rounded-full flex justify-center items-center overflow-hidden p-2 absolute top-0 left-16 z-1"
+          className="bg-white w-[57px] h-[57px] rounded-full flex justify-center items-center overflow-hidden p-2 absolute -top-5 left-1 z-1"
           style={{
             boxShadow: "0px 2px 20px rgba(0, 0, 0, 0.1)",
           }}
@@ -172,97 +172,144 @@ const StocksBought = ({ userStocks, setNumberOfAssets }) => {
     };
   }, [userStocks, user]);
   return (
-    <Stack spacing={2} className="bg-white w-[350px] h-[770px] rounded-xl p-4">
-      <h3 className="text-3xl text-[#6E7191] font-semibold">
-        Current Stock Value
-      </h3>
-      <div className={`relative w-[60%]`}>
-        <div className="flex flex-row gap-7 items-start">
-          <Price
-            price={totalValue.toLocaleString()}
-            styles="absolute -right-6 -top-1 w-5"
-            textStyles="text-3xl"
-          />
-          <div className="-translate-y-1">
-            <Return
-              type={`${totalReturn >= 0 ? "positive" : "negative"}`}
-              number={totalReturn ? totalReturn.toFixed(1) : 0}
-            />
+    <div className="p-4">
+      <div className="flex flex-row justify-between items-center">
+        <div className="space-y-2">
+          <h1 className="text-2xl text-[#6E7191] font-semibold">
+            Current Stock Value
+          </h1>
+          <div className={`relative w-[60%]`}>
+            <div className="flex flex-row gap-4 items-start">
+              <Price
+                price={totalValue.toLocaleString()}
+                styles="absolute -right-4 -top-0.5 w-4"
+                textStyles="text-2xl"
+              />
+              <div className="">
+                <Return
+                  type={`${totalReturn >= 0 ? "positive" : "negative"}`}
+                  number={totalReturn ? totalReturn.toFixed(1) : 0}
+                />
+              </div>
+            </div>
           </div>
         </div>
+        <Button
+          name={
+            <div className="flex flex-row gap-2 justify-center items-center">
+              Sell Stock{" "}
+              <img src="/images/back_arrow.svg" alt="Next Arrow" width={19} />
+            </div>
+          }
+          onClick={handleOpen}
+          otherClasses="bg-[#31CFCB] text-white w-[260px] font-light text-[16px]"
+        />
       </div>
       {companySpendDetails.length > 0 ? (
-        <>
-          <Images
-            image1={companySpendDetails[0]?.logo}
-            image2={companySpendDetails[1]?.logo}
-            image3={companySpendDetails[2]?.logo}
-            image4={companySpendDetails[3]?.logo}
-          />
-
-          <h3 className="text-center pt-10 text-xl font-semibold">
-            Share Breakdown
-          </h3>
-
-          <div className="w-full h-5 flex overflow-hidden rounded-full">
-            {companySpendDetails.map((company) => (
-              <div
-                key={"color" + company.company}
-                style={{
-                  width: `${company.percentage}%`,
-                  backgroundColor: `${company.color}`,
-                }}
-                className="h-full rounded-full mr-0.5 ml-0.5"
-                title={`${company.company}: ${company.percentage}%`}
-              />
-            ))}
+        <div className="flex flex-row w-full justify-between">
+          <div className="relative pt-16">
+            <Images
+              image1={companySpendDetails[0]?.logo}
+              image2={companySpendDetails[1]?.logo}
+              image3={companySpendDetails[1]?.logo}
+              image4={companySpendDetails[1]?.logo}
+            />
           </div>
-
-          <div className="overflow-y-auto h-[300px] justify-center items-center overflow-x-hidden">
-            {companySpendDetails.map((company) => (
-              <div
-                key={"text" + company.company}
-                className="flex flex-row p-2 gap-2 pt-4 items-center"
-              >
+          <div className="flex flex-col gap-0 items-center w-full mt-4 ml-10">
+            <h3 className="text-center font-semibold pb-3">Share Breakdown</h3>
+            <div className="w-[265px] h-4 flex overflow-hidden rounded-full">
+              {companySpendDetails.map((company) => (
                 <div
-                  className={`w-3 h-3 rounded-full`}
-                  style={{ backgroundColor: `${company.color}` }}
-                />
-                <p
-                  className="text-[#A0A3BD] w-[45%] overflow-hidden"
+                  key={"color" + company.company}
                   style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    maxWidth: "150px",
-                    whiteSpace: "nowrap",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
+                    width: `${company.percentage}%`,
+                    backgroundColor: `${company.color}`,
                   }}
-                >
-                  <span
-                    style={{ textOverflow: "ellipsis", overflow: "hidden" }}
-                  >
-                    {company.company}
-                  </span>
-                </p>
-                <Price
-                  price={company.totalSpent.toLocaleString()}
-                  styles={"absolute -right-5 -top-0.5 w-4"}
+                  className="h-full rounded-full mr-0.5 ml-0.5"
+                  title={`${company.company}: ${company.percentage}%`}
                 />
-                <p className="w-[20%] pl-4 font-semibold">
-                  ({company.percentage.toLocaleString()}%)
-                </p>
+              ))}
+            </div>
+            <div className="flex flex-row justify-between gap-2">
+              <div className="flex flex-col overflow-y-auto text-sm overflow-x-hidden">
+                {companySpendDetails.slice(0, 3).map((company) => (
+                  <div
+                    key={"text" + company.company}
+                    className="flex flex-row p-2 gap-2 pt-4 items-center"
+                  >
+                    <div
+                      className={`w-2 h-2 rounded-full`}
+                      style={{ backgroundColor: `${company.color}` }}
+                    />
+                    <p
+                      className="text-[#A0A3BD] w-[35%] overflow-hidden"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        maxWidth: "100px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      <span
+                        style={{ textOverflow: "ellipsis", overflow: "hidden" }}
+                      >
+                        {company.company}
+                      </span>
+                    </p>
+                    <Price
+                      price={company.totalSpent.toLocaleString()}
+                      styles={"absolute -right-3.5 -top-0.5 w-3"}
+                    />
+                    <p className="w-[20%] pl-2 font-semibold">
+                      ({company.percentage.toLocaleString()}%)
+                    </p>
+                  </div>
+                ))}
               </div>
-            ))}
+              <div className="flex flex-col overflow-y-auto text-sm overflow-x-hidden">
+                {companySpendDetails.slice(3, 6).map((company) => (
+                  <div
+                    key={"text" + company.company}
+                    className="flex flex-row p-2 gap-2 pt-4 items-center"
+                  >
+                    <div
+                      className={`w-2 h-2 rounded-full`}
+                      style={{ backgroundColor: `${company.color}` }}
+                    />
+                    <p
+                      className="text-[#A0A3BD] w-[35%] overflow-hidden"
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "8px",
+                        maxWidth: "100px",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                    >
+                      <span
+                        style={{ textOverflow: "ellipsis", overflow: "hidden" }}
+                      >
+                        {company.company}
+                      </span>
+                    </p>
+                    <Price
+                      price={company.totalSpent.toLocaleString()}
+                      styles={"absolute -right-3.5 -top-0.5 w-3"}
+                    />
+                    <p className="w-[20%] pl-2 font-semibold">
+                      ({company.percentage.toLocaleString()}%)
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-
-          <Button
-            name="Sell Stock"
-            onClick={handleOpen}
-            otherClasses="bg-[#31CFCB] text-white w-full tracking-wider"
-          />
-        </>
+        </div>
       ) : (
         <div className="w-full h-[60%] flex justify-center items-center font-semibold text-xl">
           No Stocks to View
@@ -275,7 +322,7 @@ const StocksBought = ({ userStocks, setNumberOfAssets }) => {
           userStocksDetails={companySpendDetails}
         />
       )}
-    </Stack>
+    </div>
   );
 };
 

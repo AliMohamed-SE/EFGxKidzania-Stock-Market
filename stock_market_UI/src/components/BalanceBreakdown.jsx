@@ -3,10 +3,12 @@ import React, { useEffect, useState } from "react";
 import Button from "./Button";
 import { useAuth } from "../providers/AuthProvider";
 import { userProfitService } from "../services/userProfit.service";
+import Price from "./Price";
 
 const BalanceBreakdown = ({ withdrawHandle }) => {
   const { user } = useAuth();
   const [prevReturn, setPrevReturn] = useState(0);
+  const added_amount = user.getTotalBalance() - user.previous_balance;
 
   const [totalProfit, setTotalProfit] = useState(0);
   const [profitReturn, setProfitReturn] = useState(0);
@@ -56,49 +58,67 @@ const BalanceBreakdown = ({ withdrawHandle }) => {
   }, [user]);
 
   return (
-    <div className="relative">
-      <Stack direction={"row"} className="flex justify-between ">
-        <div className="flex flex-col justify-between">
-          <h1 className="text-[44px] text-white tracking-wider">
-            Total Balance
-          </h1>
-          <div className="flex flex-row items-center gap-2">
-            <p className="text-white text-[42px]">
-              {user.getTotalBalance().toFixed(2)}
-            </p>
+    <div className="relative p-4">
+      <Stack direction={"column"}>
+        <h1 className="text-[37px] text-white font-me">Total Balance</h1>
+        <div className="flex flex-row items-center gap-1">
+          <p className="text-white text-[35px]">
+            {user.getTotalBalance().toFixed(2)}
+          </p>
 
-            <div className="flex flex-col items-start">
-              <img
-                src="/images/KidZosicon2.svg"
-                alt="KidZos Icon"
-                className="w-6"
-              />
-              <div className="text-sm flex flex-row items-center justify-center text-[#00ECA5]">
-                {prevReturn >= 0 ? (
-                  <img
-                    src="/images/return_balance.svg"
-                    alt="return balance"
-                    className="mr-1 w-4 h-4"
-                  />
-                ) : (
-                  <img
-                    src="/images/return_balance.svg"
-                    alt="return balance"
-                    className="mr-1 w-4 h-4 rotate-90"
-                  />
-                )}
-                {prevReturn >= 0 ? "+" : ""}
-                {prevReturn.toFixed(1)}%
-              </div>
+          <div className="flex flex-col items-start">
+            <img
+              src="/images/KidZosicon2.svg"
+              alt="KidZos Icon"
+              className="w-4 -translate-y-1"
+            />
+            <div className="text-xs flex flex-row items-center justify-center text-[#00ECA5]">
+              {prevReturn >= 0 ? (
+                <img
+                  src="/images/return_balance.svg"
+                  alt="return balance"
+                  className="mr-1 w-4 h-4"
+                />
+              ) : (
+                <img
+                  src="/images/return_balance.svg"
+                  alt="return balance"
+                  className="mr-1 w-4 h-4 rotate-90"
+                />
+              )}
+              {prevReturn >= 0 ? "+" : ""}
+              {prevReturn.toFixed(1)}%
             </div>
           </div>
         </div>
       </Stack>
-      <p className="text-[#31CFCB] pt-1">
-        Compare to ${user.previous_balance.toFixed(2)} last month
-      </p>
-      <Stack direction={"row"} className="pt-5">
-        <div className="border-r-white border-r pr-3">
+      {added_amount >= 0 ? (
+        <p className="text-[#31CFCB] pt-1 text-sm">
+          You have added{" "}
+          <Price
+            price={added_amount.toFixed(2)}
+            styles={"absolute -right-2 top-0 w-3"}
+            textStyles={"text-sm"}
+            type="2"
+            font="normal"
+          />{" "}
+          &nbsp;&nbsp;&nbsp;to your portfolio{" "}
+        </p>
+      ) : (
+        <p className="text-[#31CFCB] pt-1 text-sm">
+          You have lost{" "}
+          <Price
+            price={Math.abs(added_amount).toFixed(2)}
+            styles={"absolute -right-2 top-0 w-3"}
+            textStyles={"text-sm"}
+            type="2"
+            font="normal"
+          />{" "}
+          &nbsp;&nbsp;&nbsp;from your portfolio{" "}
+        </p>
+      )}
+      <Stack direction={"column"} spacing={2} className="pt-5">
+        <div className="space-y-1">
           <h6 className="text-[#31CFCB]">Available Cash Balance</h6>
           <div className="flex items-start gap-1 w-full relative">
             <p className="text-white text-2xl">
@@ -107,11 +127,11 @@ const BalanceBreakdown = ({ withdrawHandle }) => {
             <img
               src="/images/KidZosicon2.svg"
               alt="KidZos Icon"
-              className="w-4 mr-2" // Adjust width as needed
+              className="w-3" // Adjust width as needed
             />
           </div>
         </div>
-        <div className="border-r-white border-r pl-3 pr-3">
+        <div className="space-y-1">
           <h6 className="text-[#31CFCB]">Invested Amount</h6>
           <div className="flex items-start gap-1 w-full relative">
             <p className="text-white text-2xl">
@@ -120,11 +140,11 @@ const BalanceBreakdown = ({ withdrawHandle }) => {
             <img
               src="/images/KidZosicon2.svg"
               alt="KidZos Icon"
-              className="w-4 mr-2" // Adjust width as needed
+              className="w-3" // Adjust width as needed
             />
           </div>
         </div>
-        <div className="border-r-white border-r pl-3 pr-3">
+        <div className="space-y-1">
           <h6 className="text-[#31CFCB]">Profit Made</h6>
           <div className="flex items-start gap-1 w-full relative">
             <p className="text-white text-2xl">
@@ -133,11 +153,11 @@ const BalanceBreakdown = ({ withdrawHandle }) => {
             <img
               src="/images/KidZosicon2.svg"
               alt="KidZos Icon"
-              className="w-4 mr-2" // Adjust width as needed
+              className="w-3" // Adjust width as needed
             />
           </div>
         </div>
-        <div className="pl-3">
+        <div className="space-y-1">
           <h6 className="text-[#31CFCB]">Value of Stocks Bought</h6>
           <div className="flex items-start gap-1 w-full relative">
             <p className="text-white text-2xl">
@@ -146,21 +166,21 @@ const BalanceBreakdown = ({ withdrawHandle }) => {
             <img
               src="/images/KidZosicon2.svg"
               alt="KidZos Icon"
-              className="w-4 mr-2" // Adjust width as needed
+              className="w-3" // Adjust width as needed
             />
           </div>
         </div>
         <img
           src="/images/bag_of_money.svg"
           alt="Bag of Money"
-          className="absolute -right-12 -top-2"
-          width={310}
+          className="absolute -right-[8%] top-[26%]"
+          width={220}
         />
       </Stack>
       <Button
         name="Withdraw"
         onClick={withdrawHandle}
-        otherClasses="bg-[#31CFCB] text-white w-[175px] tracking-wider my-5"
+        otherClasses="bg-[#31CFCB] text-white w-[148px] my-5"
       />
     </div>
   );

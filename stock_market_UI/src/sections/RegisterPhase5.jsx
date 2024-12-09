@@ -40,22 +40,26 @@ const RegisterPhase5 = ({ data }) => {
             <h6 className="font-semibold text-2xl pb-2">
               Congrats! You won some kidZoS!
             </h6>
-            <p className="text-white-200">
+            <p className="text-white-200 text-sm">
               You won 15 KidZoS that you can use as a starting balance to trade
               with
             </p>
           </div>
 
-          <img src="images/mobile_money.svg" alt="15 Kidzos Recieved" />
+          <img
+            src="images/mobile_money.svg"
+            alt="15 Kidzos Recieved"
+            width={540}
+          />
         </Stack>
       </Box>
       <button
         onClick={handleClick}
-        className="border rounded-[100px] p-3 font-poppins text-normal bg-purple text-white w-[245px] absolute right-10 bottom-10 text-center"
+        className="border rounded-[100px] p-3 font-poppins text-normal bg-purple text-white w-[220px] h-[45px] absolute right-10 bottom-10 text-center"
       >
-        <div className="flex flex-row justify-center items-center gap-2">
+        <div className="flex flex-row justify-center items-center gap-2 text-sm">
           <p>Start Trading</p>
-          <img src="/images/back_arrow.svg" alt="back arrow" />
+          <img src="/images/back_arrow.svg" alt="back arrow" width={21} />
         </div>
       </button>
     </div>

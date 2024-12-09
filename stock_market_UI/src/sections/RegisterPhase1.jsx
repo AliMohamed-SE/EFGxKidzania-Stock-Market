@@ -54,104 +54,101 @@ const RegisterPhase1 = ({ data, updateData, onNext }) => {
   };
 
   return (
-    <div className="flex flex-col md:flex-row justify-center items-center font-poppins h-screen">
-      <div className="flex flex-row p-6">
-        <div className="hidden md:block">
-          <img
-            src="/images/login.png"
-            className="rounded-xl object-cover"
-            alt="Login"
-          />
-        </div>
-        <div className="flex flex-col w-full md:w-1/2 justify-center">
-          <div className="bg-white flex flex-col justify-between rounded-xl m-5 p-5 mt-0 min-h-[633px]">
-            <div className="flex flex-row justify-center items-center">
-              <img src="/images/main_logos.jpg" />
-            </div>
+    <div className="flex flex-row p-6">
+      <img
+        src="/images/register.svg"
+        className="rounded-xl object-cover"
+        alt="Login"
+      />
+      <div className="flex flex-col w-1/2">
+        <div className="bg-white flex flex-col justify-between rounded-xl m-2 ml-[18px] p-8 gap-6">
+          <div className="flex flex-row justify-center items-center">
+            <img src="/images/main_logos.svg" />
+          </div>
 
-            <div className="flex flex-col gap-3">
-              <h6 className="font-semibold text-2xl">Create Your Account</h6>
-              <p className="text-white-200 leading-loose tracking-wide">
-                Welcome to Kidzania Trading App -- we can't wait to introduce
-                you into a world of limitless possibilities
-              </p>
-            </div>
+          <div className="flex flex-col gap-1">
+            <h6 className="font-semibold text-[21px]">Create Your Account</h6>
+            <p className="text-white-200 leading-6 text-sm">
+              Welcome to Kidzania Trading App -- we can't wait to introduce you
+              into a world of limitless possibilities
+            </p>
+          </div>
 
-            <div className="w-full flex flex-col justify-center items-center gap-2">
-              <FormField
-                type="text"
-                name="first_name"
-                startAdornmentUrl="/images/profile.svg"
-                placeholder="First Name"
-                value={data.first_name}
-                onChange={(e) => {
-                  setFirstNameError(false);
-                  handleInputChange(e);
-                }}
-                error={firstNameError}
-                errorMessage="Please enter a valid first name"
+          <div className="w-full flex flex-col justify-center items-center">
+            <FormField
+              type="text"
+              name="first_name"
+              startAdornmentUrl="/images/profile.svg"
+              placeholder="First Name"
+              value={data.first_name}
+              onChange={(e) => {
+                setFirstNameError(false);
+                handleInputChange(e);
+              }}
+              error={firstNameError}
+              errorMessage="Please enter a valid first name"
+            />
+
+            <FormField
+              type="text"
+              name="last_name"
+              startAdornmentUrl="/images/profile.svg"
+              placeholder="Last Name"
+              value={data.last_name}
+              onChange={(e) => {
+                setLastNameError(false);
+                handleInputChange(e);
+              }}
+              error={lastNameError}
+              errorMessage="Please enter a valid last name"
+            />
+
+            <div className="w-full -translate-x-2">
+              <DatePicker
+                selected={
+                  isValid(parse(data.date_of_birth, "yyyy/MM/dd", new Date()))
+                    ? parse(data.date_of_birth, "yyyy/MM/dd", new Date())
+                    : null
+                }
+                onChange={handleDateChange}
+                customInput={
+                  <FormField
+                    type="text"
+                    name="date_of_birth"
+                    startAdornmentUrl="/images/calendar.svg"
+                    placeholder="Date of Birth"
+                    value={data.date_of_birth}
+                    error={dateError}
+                    errorMessage="Please enter a valid date"
+                  />
+                }
+                showYearDropdown
+                showMonthDropdown
+                dropdownMode="select"
+                dateFormat="yyyy/MM/dd"
+                maxDate={new Date()}
+                yearDropdownItemNumber={100}
+                shouldCloseOnSelect={true}
               />
-
-              <FormField
-                type="text"
-                name="last_name"
-                startAdornmentUrl="/images/profile.svg"
-                placeholder="Last Name"
-                value={data.last_name}
-                onChange={(e) => {
-                  setLastNameError(false);
-                  handleInputChange(e);
-                }}
-                error={lastNameError}
-                errorMessage="Please enter a valid last name"
-              />
-
-              <div className="w-full -translate-x-2">
-                <DatePicker
-                  selected={
-                    isValid(parse(data.date_of_birth, "yyyy/MM/dd", new Date()))
-                      ? parse(data.date_of_birth, "yyyy/MM/dd", new Date())
-                      : null
-                  }
-                  onChange={handleDateChange}
-                  customInput={
-                    <FormField
-                      type="text"
-                      name="date_of_birth"
-                      startAdornmentUrl="/images/calendar.svg"
-                      placeholder="Date of Birth"
-                      value={data.date_of_birth}
-                      error={dateError}
-                      errorMessage="Please enter a valid date"
-                    />
-                  }
-                  showYearDropdown
-                  showMonthDropdown
-                  dropdownMode="select"
-                  dateFormat="yyyy/MM/dd"
-                  maxDate={new Date()}
-                  yearDropdownItemNumber={100}
-                  shouldCloseOnSelect={true}
-                />
-              </div>
-            </div>
-
-            <div className="w-full flex flex-col justify-center items-center gap-2 mt-5">
-              <Button
-                name="Sign Up"
-                onClick={handleNext}
-                otherClasses="bg-purple text-white w-full"
-              />
-              <p>
-                Already had an account?{" "}
-                <a href="/login" className="text-purple font-semibold">
-                  Login
-                </a>
-              </p>
             </div>
           </div>
 
-          {/* <div className="bg-white flex flex-row items-center  m-5 p-5 mt-4 px-10 h-[122] rounded-xl">
+          <div className="w-full flex flex-col justify-center items-center gap-2">
+            <Button
+              name="Sign Up"
+              onClick={handleNext}
+              otherClasses="bg-purple text-white w-full h-[44px] text-sm"
+            />
+            <p className="text-white-200 text-sm">
+              Already had an account?{" "}
+              <a href="/login" className="text-purple font-semibold">
+                Login
+              </a>
+            </p>
+          </div>
+        </div>
+
+        {/* <div className="bg-white flex flex-row items-center  m-5 p-5 mt-4 px-10 h-[122] rounded-xl">
             <img src="/images/profilelist.svg" />
             <div className="mr-10 ml-6">
               <h6 className="text-[14px]">Join 100k+ happy users!</h6>
@@ -168,7 +165,6 @@ const RegisterPhase1 = ({ data, updateData, onNext }) => {
               <img src="/images/rightline.svg" className="w-10" />
             </Link>
           </div> */}
-        </div>
       </div>
     </div>
   );

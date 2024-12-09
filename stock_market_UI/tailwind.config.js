@@ -36,9 +36,7 @@ export default {
         500: "0px 16px 24px rgba(0, 0, 0, 0.25), 0px -14px 48px rgba(40, 51, 111, 0.7)",
       },
       fontFamily: {
-        inter: ["Inter", "sans-serif"],
         poppins: ["Poppins", "sans-serif"],
-        planet: ["Planet Joust", "sans-serif"],
       },
       transitionProperty: {
         borderColor: "border-color",
@@ -90,6 +88,10 @@ export default {
         280: "0 0 280px",
         256: "0 0 256px",
         100: "0 0 100%",
+      },
+      screens: {
+        big: { raw: "(min-width: 1440px) and (max-height: 1028px)" },
+        normal: { raw: "(min-width: 1280px) and (max-height: 750px)" },
       },
     },
   },

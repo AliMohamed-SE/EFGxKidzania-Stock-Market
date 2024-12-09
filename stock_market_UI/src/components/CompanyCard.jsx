@@ -13,7 +13,7 @@ const CompanyCard = memo(({ company, handleOpen }) => {
     <Grid
       key={company._id}
       size={isAdminHome ? 4 : 6}
-      className="bg-white rounded-xl p-3"
+      className="bg-white rounded-xl p-2"
     >
       <Stack spacing={1}>
         <div className="flex flex-row justify-between text-sm font-semibold">
@@ -32,47 +32,59 @@ const CompanyCard = memo(({ company, handleOpen }) => {
             <img
               src={`${backendUrl}/images/logos/${company.logo}`}
               alt="Logo"
-              width="40px"
-              height="40px"
+              width="35px"
+              height="35px"
             />
-            <span style={{ textOverflow: "ellipsis", overflow: "hidden" }}>
+            <span
+              style={{ textOverflow: "ellipsis", overflow: "hidden" }}
+              className="text-sm"
+            >
               {company.name}
             </span>
           </div>
 
           {company.current_return >= 0 ? (
-            <img src="/images/positive_return.svg" alt="positive return" />
+            <img
+              src="/images/positive_return.svg"
+              alt="positive return"
+              width={77}
+            />
           ) : (
-            <img src="/images/negative_return.svg" alt="negative return" />
+            <img
+              src="/images/negative_return.svg"
+              alt="negative return"
+              width={77}
+            />
           )}
         </div>
         <div className="flex flex-row justify-between pr-3 pt-3">
-          <div className="flex flex-row gap-2 text-[#6E7191]">
-            <img src="/images/stock_price.svg" alt="Stock Price" />
+          <div className="flex flex-row gap-2 text-[#6E7191] font-semibold text-sm">
+            <img src="/images/stock_price.svg" alt="Stock Price" width={24} />
             Stock price
           </div>
           <Price
             price={company.current_price}
-            styles="absolute -right-3 top-0 w-3"
+            styles="absolute -right-3 -top-0.5 w-3"
+            textStyles={"text-sm"}
           />
         </div>
-        <div className="flex flex-row justify-between pr-3">
-          <div className="flex flex-row gap-1 text-[#6E7191]">
-            <img src="/images/change.svg" alt="Change" />
+        <div className="flex flex-row justify-between pr-1">
+          <div className="flex flex-row gap-1 text-[#6E7191] font-semibold text-sm">
+            <img src="/images/change.svg" alt="Change" width={31} />
             Change
           </div>
-          <div className="flex flex-row gap-4 justify-center items-center">
+          <div className="flex flex-row gap-3 justify-center items-center">
             <Price
               price={`${
                 company.current_change < 0 ? "" : "+"
               }${company.current_change.toFixed(2)}`}
-              styles="absolute -right-3.5 top-0 w-3"
-              textStyles={`${
+              styles="absolute -right-3 top-0 w-3"
+              textStyles={`text-sm ${
                 company.current_change < 0 ? "text-red-600" : "text-green-500"
               }`}
             />
             <p
-              className={`text-sm tracking-wider ${
+              className={`text-xs tracking-wider ${
                 company.current_return < 0 ? "text-red-600" : "text-green-500"
               }`}
             >
@@ -81,17 +93,17 @@ const CompanyCard = memo(({ company, handleOpen }) => {
             </p>
           </div>
         </div>
-        <div className="flex flex-row justify-between pr-3">
-          <div className="flex flex-row gap-3 justify-center items-center text-[#6E7191]">
-            <img src="/images/visitors.svg" alt="Change" />
+        <div className="flex flex-row justify-between pr-2">
+          <div className="flex flex-row gap-3 justify-center items-center text-[#6E7191] font-semibold text-sm">
+            <img src="/images/visitors.svg" alt="Change" width={24} />
             Visitors
           </div>
-          <p className="font-semibold">
+          <p className="font-semibold text-sm">
             {company.current_visitors.toLocaleString()}
           </p>
         </div>
         <button
-          className="text-sm text-[#0086FF] flex flex-row gap-1 justify-end items-center"
+          className="text-xs text-[#0086FF] flex flex-row gap-1 justify-end items-center"
           onClick={() => handleOpen(company)}
         >
           View Company Details{" "}

@@ -6,6 +6,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import { Input } from "@mui/material";
 
 const FormField = React.forwardRef(
   (
@@ -22,6 +23,7 @@ const FormField = React.forwardRef(
       errorMessage,
       success,
       successMessage,
+      backgroundColor,
     },
     ref
   ) => {
@@ -36,21 +38,35 @@ const FormField = React.forwardRef(
     };
 
     return (
-      <FormControl sx={{ m: 1, width: "100%" }} variant="outlined">
-        <OutlinedInput
+      <FormControl sx={{ m: 1, width: "100%" }}>
+        <Input
           sx={{
+            height: "51px",
+            fontSize: "14px",
+            padding: 2,
+            fontFamily: "Poppins",
             borderRadius: "100px",
-            height: "100%",
-            backgroundColor: error || success ? "#FFF6F6" : "#F8F9FA",
-            border: success ? "2px solid #10BF0F" : "",
-            "& .MuiOutlinedInput-notchedOutline": {
-              success: success ? "2px solid #10BF0F" : "",
+            backgroundColor:
+              error || success
+                ? "#FFF6F6"
+                : backgroundColor
+                ? backgroundColor
+                : "#F8F9FA",
+            border: success
+              ? "2px solid #10BF0F"
+              : error
+              ? "2px solid red"
+              : "none",
+            boxShadow: "none",
+            outline: "none",
+            "&::before, &::after": {
+              content: "none",
             },
-            "&:hover .MuiOutlinedInput-notchedOutline": {
-              success: success ? "2px solid #10BF0F" : "",
+            "&:hover:not(.Mui-disabled)::before": {
+              content: "none",
             },
-            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              success: success ? "2px solid #10BF0F" : "",
+            "&.Mui-focused::after": {
+              content: "none",
             },
           }}
           type={type === "password" && showPassword ? "text" : type}
@@ -89,9 +105,11 @@ const FormField = React.forwardRef(
           ref={ref}
         />
         {success && (
-          <p className="text-[#10BF0F] mt-2 ml-2">{successMessage}</p>
+          <p className="text-[#10BF0F] mt-2 ml-2 text-sm">{successMessage}</p>
         )}
-        {error && <p className="text-red-500 mt-2 ml-2">{errorMessage}</p>}
+        {error && (
+          <p className="text-red-500 mt-2 ml-2 text-sm">{errorMessage}</p>
+        )}
       </FormControl>
     );
   }

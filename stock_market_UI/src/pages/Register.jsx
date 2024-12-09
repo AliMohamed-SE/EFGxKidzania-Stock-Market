@@ -43,7 +43,7 @@ const Register = () => {
   };
 
   return (
-    <div className="min-w-[100vw] min-h-[100vh]">
+    <div className="w-screen h-screen overflow-hidden">
       {registerationPhase === 1 && (
         <RegisterPhase1
           data={registerData}

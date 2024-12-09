@@ -43,7 +43,7 @@ const RegisterPhase4 = ({ data, updateData, onNext, onBack }) => {
     }
   }, [gender]);
   return (
-    <div className="flex flex-col items-center h-[80vh] mt-5 mb-5 overflow-hidden">
+    <div className="flex flex-col items-center h-[90vh] mt-5 mb-5 overflow-hidden">
       <Box
         sx={{
           width: "100%",
@@ -62,15 +62,17 @@ const RegisterPhase4 = ({ data, updateData, onNext, onBack }) => {
           }}
         >
           <div className="text-center">
-            <h6 className="font-semibold text-2xl pb-2">Choose Your Avatar</h6>
-            <p className="text-white-200">
+            <h6 className="font-semibold text-[21px] pb-2">
+              Choose Your Avatar
+            </h6>
+            <p className="text-white-200 text-sm">
               Please choose an avatar to represent you when trading
             </p>
           </div>
 
-          <div className="flex items-center justify-center bg-white rounded-full w-40 p-1 shadow-md">
+          <div className="flex items-center justify-center bg-white rounded-full w-[112px] h-[27px] p-1 shadow-md text-[12px]">
             <button
-              className={`flex-1 py-2 rounded-full transition-colors duration-300 ${
+              className={`px-2 py-1 rounded-full transition-colors duration-300 ${
                 gender === "male" ? "bg-purple text-white" : "bg-transparent"
               }`}
               onClick={() => handleToggle("male")}
@@ -78,7 +80,7 @@ const RegisterPhase4 = ({ data, updateData, onNext, onBack }) => {
               Male
             </button>
             <button
-              className={`flex-1 py-2 rounded-full transition-colors duration-300 ${
+              className={`px-2 py-1 rounded-full transition-colors duration-300 ${
                 gender === "female" ? "bg-purple text-white" : "bg-transparent"
               }`}
               onClick={() => handleToggle("female")}
@@ -88,26 +90,26 @@ const RegisterPhase4 = ({ data, updateData, onNext, onBack }) => {
           </div>
         </Stack>
       </Box>
-      <div className="grid grid-cols-3 lg:grid-cols-5 md:grid-cols-4 w-[90%] gap-5 mt-5 mb-10 overflow-y-auto max-h-[100%]">
+      <div className="grid grid-cols-5 w-[886px] gap-x-3 gap-y-3 mt-5 overflow-y-auto">
         {selectedList.slice(0, 15).map((avatar, index) => (
           <div
             key={index}
             onClick={() => setSelectedAvatar(avatar)}
-            className="relative"
+            className={`relative w-[160px] h-[147px] p-4 pt-5 rounded-2xl border ${
+              avatar === selectedAvatar && "border-purple"
+            } cursor-pointer`}
           >
             <img
               key={index}
               src={`/images/avatars/${avatar}.svg`}
               alt={`Avatar ${index + 1}`}
-              className={`w-[230px] object-cover rounded-3xl border shadow-md ${
-                avatar === selectedAvatar && "border-purple"
-              } cursor-pointer`}
+              className={`border-[2px] border-transparent`}
             />
             {avatar === selectedAvatar && (
               <img
                 src="/images/check.svg"
                 alt="selected"
-                className="absolute right-7 top-4 w-6"
+                className="absolute right-4 top-4 w-6"
               />
             )}
           </div>
@@ -118,7 +120,7 @@ const RegisterPhase4 = ({ data, updateData, onNext, onBack }) => {
           name="Continue"
           onClick={register}
           loading={loading}
-          otherClasses="bg-purple text-white w-[245px] absolute right-20 bottom-20"
+          otherClasses="bg-purple text-white w-[220px] absolute right-10 bottom-10"
         />
       )}
     </div>

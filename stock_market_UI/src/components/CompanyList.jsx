@@ -17,10 +17,10 @@ const CompanyList = memo(
         ) : (
           <div
             className={`overflow-auto ${
-              isAdminHome ? "max-h-[74vh]" : "max-h-[62vh]"
+              isAdminHome ? "max-h-[74vh]" : "max-h-[55vh]"
             }`}
           >
-            <Grid2 container rowSpacing={2} columnSpacing={2}>
+            <Grid2 container rowSpacing={"14px"} columnSpacing={"14px"}>
               {filteredcompanies.length > 0 ? (
                 filteredcompanies.map((company) => (
                   <CompanyCard

@@ -56,30 +56,26 @@ const Login = () => {
   }, [navigate, user]);
 
   return (
-    <div className="flex flex-row justify-center items-center font-poppins w-screen h-screen overflow-hidden lg:p-6">
-      <div className="flex flex-row w-[100%] h-[100%]">
-        <div className="w-[50%] justify-end items-center hidden xl:flex">
-          <img src="/images/login.png" alt="Login" className="object-contain" />
-        </div>
+    <div className="flex flex-row w-screen h-screen overflow-hidden p-6">
+      <div className="flex flex-row">
+        <img src="/images/login.svg" alt="Login" />
 
-        <div className="flex flex-col xl:w-[50%] justify-center">
-          <div className="bg-white flex flex-col justify-between rounded-xl p-5 m-5 mt-0 min-h-[67%]">
-            <div className="flex flex-col justify-center items-center gap-3">
+        <div className="flex flex-col">
+          <div className="bg-white h-[550px] flex flex-col rounded-xl p-5 m-2 ml-[18px]">
+            <div className="flex flex-col justify-center items-center gap-5">
               <div className="flex flex-row justify-center items-center">
                 <img src="/images/main_logos.jpg" />
               </div>
 
-              <div className="flex flex-col gap-3">
-                <h6 className="font-semibold md:text-2xl text-lg">
-                  Welcome Back!
-                </h6>
-                <p className="text-white-200 leading-loose tracking-wide text-xs md:text-lg">
+              <div className="flex flex-col gap-2">
+                <h6 className="font-semibold text-[21px]">Welcome Back!</h6>
+                <p className="text-white-200 text-sm leading-6">
                   Let's navigate the kidzenia App together - we can't wait to
                   introduce you into a world of limitless possibilities
                 </p>
               </div>
 
-              <div className="w-full flex flex-col justify-center items-center gap-2">
+              <div className="w-full flex flex-col justify-center items-center">
                 <FormField
                   type="text"
                   startAdornmentUrl="/images/profile.svg"
@@ -111,14 +107,14 @@ const Login = () => {
               <p className="text-red-500 mt-2 ml-2 text-center">{loginError}</p>
             )}
 
-            <div className="w-full flex flex-col justify-center items-center gap-2">
+            <div className="w-full flex flex-col justify-center items-center gap-2 mt-10">
               <Button
                 name="Login"
                 onClick={handleLogin}
                 loading={loading}
                 otherClasses="bg-purple text-white w-full"
               />
-              <p className="text-sm md:text-lg">
+              <p className="text-sm text-white-200">
                 Doesn’t have an account?{" "}
                 <a href="/register" className="text-purple font-semibold">
                   Sign Up

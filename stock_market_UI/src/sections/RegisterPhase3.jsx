@@ -50,7 +50,7 @@ const RegisterPhase3 = ({ data, updateData, onNext, onBack }) => {
         <Stack
           spacing={2}
           sx={{
-            width: "495px",
+            width: "422px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -59,15 +59,17 @@ const RegisterPhase3 = ({ data, updateData, onNext, onBack }) => {
           <img
             src="/images/password_security.svg"
             alt="password security"
-            className="pb-8"
+            className="pb-6"
+            width={115}
+            height={115}
           />
           <div className="text-center pb-5">
-            <h6 className="font-semibold text-2xl pb-2">Choose Password</h6>
-            <p className="text-white-200">
+            <h6 className="font-semibold text-[21px] pb-2">Choose Password</h6>
+            <p className="text-white-200 text-sm">
               Please enter a unique password to secure your account
             </p>
           </div>
-          <div className="w-[100%]">
+          <div className="w-[100%] flex justify-center">
             <FormField
               type="password"
               name="password"
@@ -80,15 +82,17 @@ const RegisterPhase3 = ({ data, updateData, onNext, onBack }) => {
               errorMessage="Password should include a capital letter and numerical characters"
               success={passwordAcceptable ? true : false}
               successMessage={passwordAcceptable ? "Good to go" : ""}
+              backgroundColor="#FFFFFF"
             />
           </div>
           <Button
             name="Next"
             onClick={onNext}
             disabled={passwordError || data.password === "" || typing}
-            otherClasses={`bg-purple text-white w-full ${
-              (passwordError || data.password === "" || typing) &&
-              "bg-[#9D8CF4]"
+            otherClasses={`text-white w-full ${
+              passwordError || data.password === "" || typing
+                ? "bg-[#9D8CF4]"
+                : "bg-purple"
             }`}
           />
           <Button

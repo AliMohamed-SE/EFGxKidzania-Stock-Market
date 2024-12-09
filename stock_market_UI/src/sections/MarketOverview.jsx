@@ -73,20 +73,21 @@ const MarketOverview = ({ balance }) => {
   }, [searchText]);
 
   return (
-    <section className="min-h-[70vh] pt-12">
+    <section className="min-h-[70vh] pt-10">
       <Stack direction={{ md: "column", lg: "row" }} spacing={0}>
         <Stack spacing={2} className="mr-5 md:w-[51rem] md:h-[10rem]">
-          <h3 className="text-2xl font-bold">Interesting Metrics</h3>
+          <h3 className="text-xl font-bold">Interesting Metrics</h3>
           <MetricsList handleOpen={handleOpen} />
         </Stack>
-        <Stack spacing={2} width={{ md: "100%", lg: "40%" }}>
-          <h3 className="text-2xl font-bold">Companies You Can Invest In</h3>
+        <Stack spacing={2} width={{ md: "100%", lg: "50%" }}>
+          <h3 className="text-xl font-bold">Companies You Can Invest In</h3>
           <FormField
             type="text"
             startAdornmentUrl="/images/magnifying_glass.svg"
             placeholder="Search Companies"
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
+            backgroundColor="#FFFFFF"
           />
           <CompanyList
             companiesLoading={companiesLoading}

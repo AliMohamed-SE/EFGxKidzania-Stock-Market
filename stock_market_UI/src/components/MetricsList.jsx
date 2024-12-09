@@ -48,13 +48,13 @@ const MetricsItem = memo(
     }, []);
 
     return (
-      <div className="bg-white relative w-full rounded-xl flex flex-row p-4">
+      <div className="bg-white relative w-[726px] rounded-xl flex flex-row p-4">
         <Stack className="w-[70%] gap-5">
-          <h4 className="flex flex-row items-center gap-2 text-lg">
-            <img src={`/images/${icon}.svg`} />
+          <h4 className="flex flex-row items-center gap-2">
+            <img src={`/images/${icon}.svg`} width={32} height={32} />
             {title}
           </h4>
-          <p className="leading-8">
+          <p className="text-xs leading-6">
             {description}{" "}
             {companyList.length > 0 && (
               <button onClick={handleOpen}>
@@ -77,15 +77,15 @@ const MetricsItem = memo(
             />
           )}
 
-          <Stack className="relative text-right gap-8">
-            <p className="text-sm">Last 24h</p>
+          <Stack className="relative text-right gap-6">
+            <p className="text-xs">Last 24h</p>
             <div className="flex flex-col gap-1">
-              <p className="text-lg font-semibold">
+              <p className="font-semibold">
                 {name ? `${name} (${acronym})` : "No Company Yet"}
               </p>
               {(title === "Trending Now" || title === "Highest Return") && (
-                <h1 className="text-3xl flex flex-row gap-4 items-center justify-end">
-                  <Price price={price} styles="absolute -right-5 -top-1 w-5" />
+                <h1 className="text-2xl flex flex-row gap-4 items-center justify-end">
+                  <Price price={price} styles="absolute -right-4 top-0 w-4" />
                   <Return
                     type={current_return > 0 ? "positive" : "negative"}
                     number={Math.abs(current_return)}
@@ -93,28 +93,28 @@ const MetricsItem = memo(
                 </h1>
               )}
               {(title === "Most Traded" || title === "Most Visited") && (
-                <div className="text-3xl flex flex-row gap-2 items-center justify-end -translate-y-2">
+                <div className="text-2xl flex flex-row gap-2 items-center justify-end -translate-y-1">
                   {title === "Most Traded" ? (
                     <img
                       src="/images/most_traded_icon.svg"
                       alt="Change"
-                      width={38}
-                      height={38}
+                      width={34}
+                      height={34}
                     />
                   ) : (
                     <img
                       src="/images/visitors.svg"
                       alt="Change"
-                      width={38}
-                      height={38}
+                      width={34}
+                      height={34}
                     />
                   )}
                   <div className="flex flex-col gap-0 justify-center">
-                    <p className="text-[20px] font-semibold h-6">
+                    <p className="font-semibold h-6 text-lg">
                       {" "}
                       {number && number.toLocaleString()}
                     </p>
-                    <span className="text-white-300 text-[12px]">
+                    <span className="text-white-300 text-xs">
                       {title === "Most Traded" ? "Trades" : "Visitors"}
                     </span>
                   </div>
@@ -133,15 +133,15 @@ const MetricsItem = memo(
         >
           <Box sx={style}>
             <div className="flex flex-row mb-5">
-              <div className="flex flex-col gap-2">
-                <h3 className="font-semibold text-3xl">{title}</h3>
+              <div className="flex flex-col gap-4">
+                <h3 className="font-medium text-3xl">{title}</h3>
                 <p className="text-sm text-[#6E7191] pl-1">{description}</p>
               </div>
               <div
                 className="flex flex-row items-center text-2xl gap-2 ml-auto"
                 onClick={handleClose}
               >
-                Close <img src="/images/close.svg" alt="close" />
+                Close <img src="/images/close.svg" alt="close" width={33} />
               </div>
             </div>
             <DataTable
@@ -198,7 +198,7 @@ const MetricsList = React.memo(({ handleOpen }) => {
 
   return (
     <div>
-      <Stack spacing={2.5}>
+      <Stack spacing={2}>
         <MetricsItem
           title="Trending Now"
           tableHeader="Current Number of Investors"

@@ -1,9 +1,14 @@
 import clsx from "clsx";
 import React from "react";
 
-const Price = ({ price, styles, textStyles, type }) => {
+const Price = ({ price, styles, textStyles, type, font }) => {
   return (
-    <span className={clsx("relative font-semibold", textStyles)}>
+    <span
+      className={clsx(
+        `relative ${font ? `font-${font}` : "font-semibold"}`,
+        textStyles
+      )}
+    >
       {price}{" "}
       {type ? (
         <img

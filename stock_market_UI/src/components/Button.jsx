@@ -6,7 +6,7 @@ const Button = ({ name, onClick, otherClasses, loading, disabled }) => {
     <button
       type="submit"
       className={clsx(
-        "border rounded-[100px] p-3 font-poppins text-normal",
+        "border rounded-[100px] p-3 font-poppins text-sm h-[44px]",
         otherClasses
       )}
       onClick={onClick}

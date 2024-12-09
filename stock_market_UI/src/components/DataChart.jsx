@@ -141,14 +141,14 @@ const DataChart = ({ history }) => {
   return (
     <Stack spacing={3}>
       <div className="flex flex-row gap-2 items-center">
-        <img src="/images/chart_logo.svg" alt="Chart Logo" />
-        <p className="text-2xl">Chart</p>
+        <img src="/images/chart_logo.svg" alt="Chart Logo" width={34} />
+        <p className="">Chart</p>
       </div>
-      <div className="flex items-center justify-center bg-white-100 rounded-full w-80 h-[37px] p-1 shadow-md text-xl">
+      <div className="flex items-center justify-center bg-white-100 rounded-full w-[221px] h-[34px] p-1">
         <button
           className={`flex-1 py-2 rounded-full transition-colors duration-300 ${
             type === "price" ? "bg-white" : "bg-transparent"
-          } h-[37px] flex items-center justify-center`}
+          } h-[34px] flex items-center justify-center`}
           onClick={() => handleToggle("price")}
         >
           Price Chart
@@ -163,9 +163,9 @@ const DataChart = ({ history }) => {
           Sales Chart
         </button>
       </div>
-      <div className="flex items-center justify-center w-full p-1 text-xl gap-5">
+      <div className="flex items-center justify-center w-full p-1 gap-5">
         <button
-          className={`flex  py-2 justify-center items-center rounded-full transition-colors duration-300 h-[40px] w-[160px] ${
+          className={`flex  py-2 justify-center items-center rounded-full transition-colors duration-300 h-[34px] w-[140px] ${
             period === "7D" ? "bg-purple text-white" : "bg-white-100"
           }`}
           onClick={() => setPeriod("7D")}
@@ -173,7 +173,7 @@ const DataChart = ({ history }) => {
           7D
         </button>
         <button
-          className={`flex py-2 justify-center items-center rounded-full transition-colors duration-300 h-[40px] w-[160px] ${
+          className={`flex py-2 justify-center items-center rounded-full transition-colors duration-300 h-[34px] w-[140px] ${
             period === "1M" ? "bg-purple text-white" : "bg-white-100"
           }`}
           onClick={() => setPeriod("1M")}
@@ -181,7 +181,7 @@ const DataChart = ({ history }) => {
           1M
         </button>
         <button
-          className={`flex  py-2 justify-center items-center rounded-full transition-colors duration-300 h-[40px] w-[160px] ${
+          className={`flex  py-2 justify-center items-center rounded-full transition-colors duration-300 h-[34px] w-[140px] ${
             period === "1Y" ? "bg-purple text-white" : "bg-white-100"
           }`}
           onClick={() => setPeriod("1Y")}
@@ -195,10 +195,10 @@ const DataChart = ({ history }) => {
         </div>
       ) : (
         <AreaChart
-          width={700}
-          height={310}
+          width={610}
+          height={270}
           data={data}
-          className="-translate-x-6"
+          className="-translate-x-10"
           margin={{ right: 10, left: 10, bottom: 20 }}
         >
           <XAxis

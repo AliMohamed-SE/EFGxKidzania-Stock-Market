@@ -48,7 +48,7 @@ const RegisterPhase2 = ({ data, updateData, onNext, onBack }) => {
         <Stack
           spacing={2}
           sx={{
-            width: "495px",
+            width: "422px",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -58,14 +58,16 @@ const RegisterPhase2 = ({ data, updateData, onNext, onBack }) => {
             src="/images/login_security.svg"
             alt="login security"
             className="pb-8"
+            width={105}
+            height={90}
           />
-          <div className="text-center pb-5">
-            <h6 className="font-semibold text-2xl pb-2">Choose Username</h6>
-            <p className="text-white-200">
+          <div className="text-center pb-4">
+            <h6 className="font-semibold text-[21px] pb-2">Choose Username</h6>
+            <p className="text-white-200 text-sm">
               Choose a unique name to represent you during trading
             </p>
           </div>
-          <div className="w-[100%]">
+          <div className="w-[100%] flex justify-center">
             <FormField
               type="text"
               name="username"
@@ -78,15 +80,17 @@ const RegisterPhase2 = ({ data, updateData, onNext, onBack }) => {
               errorMessage="username is not available"
               success={usernameAvailable ? true : false}
               successMessage={usernameAvailable ? "username is available" : ""}
+              backgroundColor="#FFFFFF"
             />
           </div>
           <Button
             name="Next"
             onClick={onNext}
             disabled={usernameError || data.username === "" || typing}
-            otherClasses={`bg-purple text-white w-full ${
-              (usernameError || data.username === "" || typing) &&
-              "bg-[#9D8CF4]"
+            otherClasses={`text-white w-full ${
+              usernameError || data.username.length <= 0 || typing
+                ? "bg-[#9D8CF4]"
+                : "bg-purple"
             }`}
           />
           <Button

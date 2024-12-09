@@ -19,20 +19,22 @@ const BuyStockWindow = ({ company }) => {
 
   const handleBuyStocks = async () => {
     setLoading(true);
-    // Validate quantity
-    if (quantity < 1) {
-      setError("Quantity must be greater than 0!");
-      return;
-    }
-
-    // Check if user has enough balance
-    const totalCost = quantity * company.current_price;
-    if (totalCost > user.wallet_balance) {
-      setError("Not enough kidzos!");
-      return;
-    }
 
     try {
+      // Validate quantity
+      if (quantity < 1) {
+        throw new Error("Quantity must be greater than 0!");
+      }
+      if (!Number.isInteger(quantity)) {
+        throw new Error("Quantity must be a whole number!");
+      }
+
+      // Check if user has enough balance
+      const totalCost = quantity * company.current_price;
+      if (totalCost > user.wallet_balance) {
+        throw new Error("Not enough kidzos!");
+      }
+
       const userStocksData = {
         userId: user._id,
         companyId: company._id,
@@ -49,7 +51,6 @@ const BuyStockWindow = ({ company }) => {
       setError("");
     } catch (error) {
       setError(error.message);
-      return;
     } finally {
       setLoading(false);
     }
@@ -92,11 +93,11 @@ const BuyStockWindow = ({ company }) => {
 
   return (
     <Stack spacing={2}>
-      <div className="flex flex-row gap-2 items-center justify-start text-xl">
-        <img src="images/trade.svg" alt="Trade" /> Trade
+      <div className="flex flex-row gap-2 items-center justify-start font-medium">
+        <img src="images/trade.svg" alt="Trade" width={36} /> Trade
       </div>
       <div className="flex flex-col gap-1">
-        <h3 className="flex flex-row gap-2 items-center justify-start text-[27px] font-bold">
+        <h3 className="flex flex-row gap-2 items-center justify-start text-[24px] font-semibold">
           {" "}
           Buy {company.acronym}{" "}
           <img
@@ -105,21 +106,21 @@ const BuyStockWindow = ({ company }) => {
             height={30}
           />
         </h3>
-        <p className="flex flex-row items-center">
+        <p className="flex flex-row items-center text-xs">
           <img src="/images/stock_arrow.svg" alt="Stock" /> 1 ={" "}
           <Price
             price={company.current_price}
-            styles={"absolute -right-3 top-0 w-3"}
+            styles={"absolute -right-2.5 top-0 w-2"}
             textStyles="pl-2"
           />
         </p>
       </div>
       <div className=" flex flex-col gap-3 relative">
-        <div className="w-[320px] h-[110px] bg-white-100 rounded-2xl">
+        <div className="h-[97px] bg-white-100 rounded-2xl">
           <Stack spacing={1} className="p-3 pl-4">
             <div>
-              <h3>Current Ownership</h3>
-              <p className="font-sm text-white-200">{sharesQuantity} Shares</p>
+              <h3 className="text-xs">Current Ownership</h3>
+              <p className="text-xs text-white-200">{sharesQuantity} Shares</p>
             </div>
             <div className="flex flex-row justify-between items-center">
               {" "}
@@ -136,23 +137,21 @@ const BuyStockWindow = ({ company }) => {
                     setQuantity(e.target.value);
                   }
                 }}
-                className="bg-white-100 text-2xl w-[40%]"
+                className="bg-white-100 text-lg w-[40%]"
               />
-              <p className="text-white-200 text-[18px] tracking-wider">
-                Shares
-              </p>
+              <p className="text-white-200 tracking-wider">Shares</p>
             </div>
           </Stack>
         </div>
-        <div className="w-[320px] h-[110px] bg-white-100 rounded-2xl">
+        <div className="h-[97px] bg-white-100 rounded-2xl">
           <Stack spacing={1} className="p-3 pl-4">
             <div>
-              <h3>Available Balance</h3>
+              <h3 className="text-xs">Available Balance</h3>
               {user && (
                 <Price
                   price={user.wallet_balance.toLocaleString()}
-                  styles="absolute -right-4 -top-0.5 w-4"
-                  textStyles={"text-white-200"}
+                  styles="absolute -right-3.5 -top-0.5 w-3"
+                  textStyles={"text-white-200 text-xs"}
                 />
               )}
             </div>
@@ -160,19 +159,19 @@ const BuyStockWindow = ({ company }) => {
               {" "}
               <input
                 value={quantity * company.current_price}
-                className="bg-white-100 text-2xl w-[50%]"
+                className="bg-white-100 text-lg w-[50%]"
                 disabled
               />
-              <p className="text-white-200 text-[18px]">KIDZOS</p>
+              <p className="text-white-200">KIDZOS</p>
             </div>
           </Stack>
         </div>
         <img
           src="/images/trade_between.svg"
           alt="Trade Between"
-          width={48}
-          height={48}
-          className="absolute left-[45%] top-[40%]"
+          width={42}
+          height={42}
+          className="absolute left-[45%] top-[38%]"
         />
         {error.length > 0 && (
           <p className="text-red-600 text-center">{error}</p>
