@@ -99,7 +99,7 @@ const CompanyCard = memo(({ company, handleOpen }) => {
           </p>
         </div>
         <button
-          className="text-xs text-[#0086FF] flex flex-row gap-1 justify-end items-center"
+          className="text-xs text-[#0086FF] flex flex-row gap-1 justify-end items-center pr-2"
           onClick={() => handleOpen(company)}
         >
           View Company Details{" "}

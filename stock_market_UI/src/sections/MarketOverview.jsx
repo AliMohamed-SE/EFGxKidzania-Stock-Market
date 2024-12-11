@@ -74,8 +74,8 @@ const MarketOverview = ({ balance }) => {
 
   return (
     <section className="min-h-[70vh] pt-10">
-      <Stack direction={{ md: "column", lg: "row" }} spacing={0}>
-        <Stack spacing={2} className="mr-3 md:w-[60rem]">
+      <Stack direction={"row"} spacing={3}>
+        <Stack spacing={2} className="mr-3 w-[62%]">
           <h3 className="text-xl font-bold">Companies You Can Invest In</h3>
           <CompanyList
             companiesLoading={companiesLoading}
@@ -83,7 +83,7 @@ const MarketOverview = ({ balance }) => {
             handleOpen={handleOpen}
           />
         </Stack>
-        <Stack spacing={2} width={{ md: "100%", lg: "50%" }}>
+        <Stack spacing={2} className="w-[38%]">
           {/* <FormField
             type="text"
             startAdornmentUrl="/images/magnifying_glass.svg"
