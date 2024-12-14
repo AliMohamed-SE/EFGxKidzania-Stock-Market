@@ -12,7 +12,7 @@ let logDirectory;
 if (process.env.NODE_ENV === "development") {
   logDirectory = "/app/logs";
 } else {
-  logDirectory = path.join(__dirname, "../../logs");
+  logDirectory = "/tmp/logs";
 }
 
 // Create a daily rotate file transport
@@ -39,16 +39,13 @@ const logger = winston.createLogger({
   transports: [dailyRotateFileTransport],
 });
 
-// If in development, also log to console
-if (process.env.NODE_ENV === "development") {
-  logger.add(
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.simple()
-      ),
-    })
-  );
-}
+logger.add(
+  new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.simple()
+    ),
+  })
+);
 
 export default logger;
