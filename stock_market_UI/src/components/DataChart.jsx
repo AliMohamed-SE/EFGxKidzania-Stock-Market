@@ -195,28 +195,28 @@ const DataChart = ({ history }) => {
         </div>
       ) : (
         <AreaChart
-          width={610}
+          width={650}
           height={270}
           data={data}
           className="-translate-x-10"
           margin={{ right: 10, left: 10, bottom: 20 }}
         >
+          <div className="recharts-tooltip-cursor" />
+          <CartesianGrid strokeDasharray="5 5" />
           <XAxis
             dataKey="x"
-            padding={{ left: 10, right: 10 }}
             axisLine={false}
             tickLine={false}
             interval={period === "1M" ? 1 : 0}
             tick={{
               angle: -45,
-              dy: 10,
+              dy: 15,
               fontSize: 15,
               fill: "#9AA0A6",
             }}
           />
           <YAxis
             domain={yDomain} // Set the Y-axis domain here
-            padding={{ top: 10, bottom: 10 }}
             axisLine={false}
             tickLine={false}
             interval={0}
@@ -232,7 +232,11 @@ const DataChart = ({ history }) => {
             stroke="#6143F0"
             strokeWidth={4}
             fill="rgba(97, 67, 240, 0.3)"
-            dot={<CustomDot />}
+            activeDot={{
+              r: 8,
+              fill: "#6143F0",
+              strokeWidth: 4,
+            }}
           />
         </AreaChart>
       )}

@@ -22,6 +22,7 @@ import UserWithdrawRoutes from "./src/UserWithdraw/UserWithdrawRoutes.js";
 import TransactionRoutes from "./src/Transaction/TransactionRoutes.js";
 import AdminRoutes from "./src/Admin/AdminRoutes.js";
 import { startCronJobs } from "./src/jobs/userUpdateJobs.js";
+import { insertData } from "./db/Seeders/companyHistory.js";
 
 config();
 const app = express();
@@ -100,6 +101,7 @@ const startServer = async () => {
     await connectToDB();
 
     // await seedDatabase();
+    // insertData().catch((err) => console.log(err));
 
     // Start Cron Jobs
     startCronJobs();

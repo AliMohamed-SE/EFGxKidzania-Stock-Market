@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../providers/AuthProvider";
 import Navbar from "../components/Navbar";
@@ -12,12 +12,21 @@ import Loading from "../components/Loading";
 import MyPortfolio from "../sections/MyPortfolio";
 import LeaderboardsTable from "../sections/LeaderboardsTable";
 import WithdrawSection from "../sections/WithdrawSection";
+import ReturnsMade from "../sections/ReturnsMade";
 
 const Home = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [view, setView] = React.useState("Market Overview");
+  const [view, setView] = useState("Market Overview");
+  const [companyBought, setCompanyBought] = useState({
+    companyId: "",
+    companyLogo: "",
+    companyName: "",
+    companyReturn: 0,
+    invested_amount: 0,
+    profit_made: 0,
+  });
 
   const handleChange = (event, newView) => {
     setView(newView);
@@ -60,6 +69,7 @@ const Home = () => {
             >
               {[
                 "Market Overview",
+                "Returns Made",
                 "My Portfolio",
                 "Withdraw",
                 "Leaderboard",
@@ -84,7 +94,10 @@ const Home = () => {
             </TabList>
           </Box>
           <TabPanel value="Market Overview" sx={{ padding: 0 }}>
-            <MarketOverview balance={user.wallet_balance} />
+            <MarketOverview setCompanyBought={setCompanyBought} />
+          </TabPanel>
+          <TabPanel value="Returns Made" sx={{ padding: 0, paddingTop: 2 }}>
+            <ReturnsMade companyBought={companyBought} />
           </TabPanel>
           <TabPanel
             value="My Portfolio"

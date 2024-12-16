@@ -7,7 +7,7 @@ import { userStocksService } from "../services/userStocks.service.js";
 import { userService } from "../services/user.service.js";
 import UserEntity from "../entities/userEntity.js";
 
-const BuyStockWindow = ({ company }) => {
+const BuyStockWindow = ({ company, setCompanyBought }) => {
   const { user, setUser, backendUrl } = useAuth();
 
   const [quantity, setQuantity] = useState(1);
@@ -47,6 +47,19 @@ const BuyStockWindow = ({ company }) => {
       setUser(new UserEntity(updatedUser));
       sessionStorage.setItem("token", JSON.stringify(updatedUser));
       setSuccess("Stocks have been bought successfully");
+
+      console.log(company.current_return);
+
+      const companyBought = {
+        companyId: company._id,
+        companyLogo: company.logo,
+        companyName: company.name,
+        companyReturn: company.current_return,
+        invested_amount: quantity * company.current_price,
+        profit_made: quantity * company.current_change,
+      };
+
+      setCompanyBought(companyBought);
       fetchUserStocks();
       setError("");
     } catch (error) {

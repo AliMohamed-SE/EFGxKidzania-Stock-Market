@@ -8,7 +8,7 @@ import CompanyList from "../components/CompanyList.jsx";
 import CompanyDetailsModal from "../components/CompanyDetailsModal.jsx";
 import { useAuth } from "../providers/AuthProvider.jsx";
 
-const MarketOverview = ({ balance }) => {
+const MarketOverview = ({ setCompanyBought }) => {
   const { user } = useAuth();
 
   const [availableCompanies, setAvailableCompanies] = useState([]);
@@ -81,6 +81,7 @@ const MarketOverview = ({ balance }) => {
             companiesLoading={companiesLoading}
             filteredcompanies={filteredcompanies}
             handleOpen={handleOpen}
+            setCompanyBought={setCompanyBought}
           />
         </Stack>
         <Stack spacing={2} className="w-[38%]">
@@ -103,6 +104,7 @@ const MarketOverview = ({ balance }) => {
           open={open}
           handleClose={handleClose}
           company={openedCompany}
+          setCompanyBought={setCompanyBought}
         />
       )}
     </section>
