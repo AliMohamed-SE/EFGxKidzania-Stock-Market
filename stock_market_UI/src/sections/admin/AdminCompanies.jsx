@@ -46,8 +46,14 @@ const AdminCompanies = () => {
       setCompaniesLoading(true);
 
       const companies = await companyService.getCompanies(1000000);
-      setAvailableCompanies(companies);
-      setFilteredcompanies(companies);
+
+      // Sort companies alphabetically by their name
+      const sortedCompanies = companies.sort((a, b) =>
+        a.name.localeCompare(b.name)
+      );
+
+      setAvailableCompanies(sortedCompanies);
+      setFilteredcompanies(sortedCompanies);
 
       setCompaniesLoading(false);
     } catch (error) {

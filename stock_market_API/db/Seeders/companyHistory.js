@@ -5,41 +5,48 @@ import Company from "../Schemas/CompanySchema.js";
 // Connect to MongoDB
 export async function insertData() {
   // Read the Excel file
-  const workbook = xlsx.readFile("path_to_your_excel_file.xlsx");
+  const workbook = xlsx.readFile("/home/alimohamed/Downloads/MONTH1112.xlsx");
 
   // Assume the sheet containing the data is the first sheet
   const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
   // Convert the sheet data to JSON
-  const data = xlsx.utils.sheet_to_json(sheet);
-
-  // Example of data from Excel
-  // [
-  //   { Company: "Company A", "2024-12-01": 1200, "2024-12-02": 1500, "2024-12-03": 1300 },
-  //   { Company: "Company B", "2024-12-01": 800, "2024-12-02": 900, "2024-12-03": 1000 }
-  // ]
+  const data = xlsx.utils.sheet_to_json(sheet, { header: 1 });
 
   for (const record of data) {
-    const companyName = record.Company;
-    const company = await Company.findOne({ name: companyName });
+    const establishment = record[0];
+    const company = await Company.findOne({
+      establishment_type: establishment,
+    });
     if (!company) {
-      console.log(`Company ${companyName} not found`);
+      console.log(`Establishment ${establishment} not found`);
       continue;
     }
 
+    console.log(`Establishment ${establishment} found`);
     const companyId = company._id;
 
-    // Loop through the dates and create history records
-    for (const date in record) {
-      if (date === "Company") continue; // Skip the Company column
+    let currentDate = new Date();
+    currentDate.setDate(currentDate.getDate() - 1);
 
-      const visitors = record[date];
-      const sharesPrice = visitors / 100;
+    let daysAgo = 30;
+
+    for (let i = 1; i < record.length - 1; i++) {
+      const visitors = record[i];
+
+      if (typeof visitors !== "number") continue;
+
+      // Calculate the date for this record
+      const computedDate = new Date(currentDate);
+      computedDate.setDate(computedDate.getDate() - daysAgo);
+
+      // Prepare the history object
+      const sharesPrice = visitors / 100; // Compute shares price
       const sharesReturn = 0; // Default to 0
 
       const history = {
         companyId,
-        date: new Date(date),
+        date: computedDate,
         number_of_buys: 0,
         number_of_sells: 0,
         shares_price: sharesPrice,
@@ -47,10 +54,14 @@ export async function insertData() {
         visitors,
       };
 
-      await StockHistory.insertOne(history);
+      console.log(history);
+
+      const newStockHistory = new StockHistory(history);
+      await newStockHistory.save();
+
+      daysAgo--;
     }
   }
 
   console.log("Data inserted successfully");
-  await client.close();
 }

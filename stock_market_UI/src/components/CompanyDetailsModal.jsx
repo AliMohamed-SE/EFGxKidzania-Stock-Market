@@ -165,7 +165,7 @@ const CompanyDetailsModal = memo(
           <Stack direction={"row"} spacing={5} className="h-[510px]">
             <animated.div style={stackTransition}>
               <Stack spacing={5} className="flex justify-center items-center">
-                <div className="company-card relative border-[2px] border-purple bg-white w-[300px] h-[224px] p-3">
+                <div className="company-card relative border-[2px] border-purple bg-white w-[300px] h-[224px] p-3 overflow-hidden overflow-y-auto">
                   {company && company.description}
                 </div>
 

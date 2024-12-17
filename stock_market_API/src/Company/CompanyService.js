@@ -210,11 +210,18 @@ class CompanyService {
           );
 
           // Perform calculations for the current record
-          const currentPrice = currentVisitors / 100;
-          const currentChange = currentPrice - prevPrice;
-          const currentReturn = prevPrice
-            ? ((currentPrice - prevPrice) / prevPrice) * 100
-            : 0; // Avoid division by zero
+          const currentPrice =
+            currentVisitors > 0 ? currentVisitors / 100 : prevVisitors;
+          const currentChange =
+            currentVisitors > 0
+              ? currentPrice - prevPrice
+              : existingCompany.current_change;
+          const currentReturn =
+            currentVisitors > 0
+              ? prevPrice
+                ? ((currentPrice - prevPrice) / prevPrice) * 100
+                : 0
+              : prevReturn;
 
           // Prepare bulk operation for updating the company collection
           bulkOperations.push({
@@ -224,7 +231,10 @@ class CompanyService {
                 $set: {
                   current_price: parseFloat(currentPrice.toFixed(2)),
                   current_change: currentChange,
-                  current_visitors: currentVisitors,
+                  current_visitors:
+                    currentVisitors > 0
+                      ? currentVisitors
+                      : existingCompany.current_visitors,
                   current_return: parseFloat(currentReturn.toFixed(2)), // Ensure numeric value with 2 decimals
                   last_updated: new Date(), // Add a timestamp for updates
                 },
