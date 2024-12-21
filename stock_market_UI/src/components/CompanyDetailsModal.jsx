@@ -11,7 +11,7 @@ import BuyStockWindow from "./BuyStockWindow";
 import { useAuth } from "../providers/AuthProvider";
 
 const CompanyDetailsModal = memo(
-  ({ open, handleClose, company, setCompanyBought }) => {
+  ({ open, handleClose, company, setCompanyBought, ReturnsMadeHandle }) => {
     const { backendUrl } = useAuth();
     const [companyHistory, setCompanyHistory] = useState([]);
     const [monthlyVisitors, setMonthlyVisitors] = useState(0);
@@ -49,10 +49,10 @@ const CompanyDetailsModal = memo(
         setLoading(true);
 
         const history = await stocksHistoryService.getCompanyHistory(
-          company._id
+          company._id,
+          365
         );
         setCompanyHistory(history);
-        console.log(history);
 
         if (history.length > 0) {
           const totalMonthlyVisitors = history.reduce((total, entry) => {
@@ -147,11 +147,7 @@ const CompanyDetailsModal = memo(
           <div className="flex flex-row mb-10">
             <div className="flex flex-col gap-2">
               <div className="flex flex-row gap-4 justify-center items-center">
-                <img
-                  src={`${backendUrl}/images/logos/${company.logo}`}
-                  width={40}
-                  height={40}
-                />
+                <img src={`${company.logo}`} width={40} height={40} />
                 <h3 className="font-semibold text-[28px]"> {company.name}</h3>
               </div>
             </div>
@@ -201,7 +197,7 @@ const CompanyDetailsModal = memo(
               className="w-[639px] h-[491px] "
               style={chartTransition}
             >
-              <div className="company-card relative border-[2px] border-purple bg-white w-full h-full p-4">
+              <div className="company-card relative border-[2px] border-purple bg-white w-full h-full">
                 <DataChart history={companyHistory} />
               </div>
             </animated.div>
@@ -214,6 +210,7 @@ const CompanyDetailsModal = memo(
                 <BuyStockWindow
                   company={company}
                   setCompanyBought={setCompanyBought}
+                  ReturnsMadeHandle={ReturnsMadeHandle}
                 />
               </div>
             </animated.div>

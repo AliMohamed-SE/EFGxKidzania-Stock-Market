@@ -8,7 +8,7 @@ import CompanyList from "../components/CompanyList.jsx";
 import CompanyDetailsModal from "../components/CompanyDetailsModal.jsx";
 import { useAuth } from "../providers/AuthProvider.jsx";
 
-const MarketOverview = ({ setCompanyBought }) => {
+const MarketOverview = ({ setCompanyBought, ReturnsMadeHandle }) => {
   const { user } = useAuth();
 
   const [availableCompanies, setAvailableCompanies] = useState([]);
@@ -111,6 +111,7 @@ const MarketOverview = ({ setCompanyBought }) => {
           handleClose={handleClose}
           company={openedCompany}
           setCompanyBought={setCompanyBought}
+          ReturnsMadeHandle={ReturnsMadeHandle}
         />
       )}
     </section>

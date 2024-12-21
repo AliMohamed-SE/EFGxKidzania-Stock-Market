@@ -2,6 +2,7 @@ import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
 import { config } from "dotenv";
+config();
 import { connectToDB } from "./db/database.js";
 
 import logger from "morgan";
@@ -21,10 +22,9 @@ import UserProfitRoutes from "./src/UserProfit/UserProfitRoutes.js";
 import UserWithdrawRoutes from "./src/UserWithdraw/UserWithdrawRoutes.js";
 import TransactionRoutes from "./src/Transaction/TransactionRoutes.js";
 import AdminRoutes from "./src/Admin/AdminRoutes.js";
-import { startCronJobs } from "./src/jobs/userUpdateJobs.js";
+// import { startCronJobs } from "./src/jobs/userUpdateJobs.js";
 import { insertData } from "./db/Seeders/companyHistory.js";
 
-config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -104,7 +104,7 @@ const startServer = async () => {
     // insertData().catch((err) => console.log(err));
 
     // Start Cron Jobs
-    startCronJobs();
+    // startCronJobs();
 
     // Start Server
     app.listen(PORT, "0.0.0.0", (err) => {

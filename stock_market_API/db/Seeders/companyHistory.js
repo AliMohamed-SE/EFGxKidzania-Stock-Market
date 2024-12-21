@@ -4,8 +4,8 @@ import Company from "../Schemas/CompanySchema.js";
 
 // Connect to MongoDB
 export async function insertData() {
-  // Read the Excel file
-  const workbook = xlsx.readFile("/home/alimohamed/Downloads/MONTH1112.xlsx");
+  // Read the Excel file"/home/alimohamed/Downloads/MONTH1112.xlsx"
+  const workbook = xlsx.readFile("C:/Users/alisa/Downloads/0412.xlsx");
 
   // Assume the sheet containing the data is the first sheet
   const sheet = workbook.Sheets[workbook.SheetNames[0]];
