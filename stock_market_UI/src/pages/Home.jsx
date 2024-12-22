@@ -87,14 +87,16 @@ const Home = () => {
                     fontWeight: "normal",
                     textTransform: "none",
                     transition: "all 0.3s ease",
-                    cursor: enabledTabs[index] ? "not-allowed" : "pointer",
-                    opacity: enabledTabs[index] ? 0.5 : 1,
+                    // cursor: enabledTabs[index] ? "not-allowed" : "pointer",
+                    cursor: "pointer",
+                    // opacity: enabledTabs[index] ? 0.5 : 1,
+                    opacity: 1,
                     "&.Mui-selected": {
                       backgroundColor: "#6143F0",
                       color: "white",
                     },
                   }}
-                  disabled={enabledTabs[index]} // Disable the tab based on the condition
+                  // disabled={enabledTabs[index]}
                 />
               ))}
             </TabList>
