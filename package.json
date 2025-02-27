@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "cloudinary": "^2.5.1",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "tailwind-scrollbar": "^4.0.0"
   }
 }
